@@ -23,7 +23,7 @@ class BagListItemInline(admin.TabularInline):
 
 @admin.register(BagList)
 class BagListAdmin(admin.ModelAdmin):
-    list_display = ("title", "owner", "visibility", "published_at", "is_deleted")
+    list_display = ("id","title", "owner", "visibility","slug", "published_at", "is_deleted")
     list_filter = ("visibility", "published_at", "is_deleted")
     search_fields = ("title", "owner__handle")
     inlines = [BagListSectionInline, BagListItemInline]
