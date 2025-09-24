@@ -48,10 +48,3 @@ Los seguidores pueden ver estas listas, inspirarse, guardar productos o añadirl
 
 ---
 
-## Instalación y setup
-
-1. Clonar el repositorio:
-
-```bash
-git clone https://github.com/excusasclub/liser_ver2.git
-cd liser_ver2
