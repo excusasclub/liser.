@@ -4,5 +4,5 @@ from . import views
 app_name = 'lists'
 
 urlpatterns = [
-    path('baglist/<uuid:baglist_id>/', views.baglist_detail, name='baglist_detail'),
+    path('baglist/<str:handle>/<slug:slug>/', views.baglist_detail, name='baglist_detail'),
 ]

@@ -1,0 +1,75 @@
+<header class="bg-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+
+        <!-- Logo -->
+        <div class="flex-shrink-0">
+            <a href="/" class="text-[#315C95] font-bold text-2xl">Liser</a>
+        </div>
+
+        <!-- Navegación principal -->
+        <nav class="hidden md:flex space-x-6">
+            <a href="/" class="text-gray-700 hover:text-[#315C95] transition">Inicio</a>
+            <a href="/baglists" class="text-gray-700 hover:text-[#315C95] transition">BagLists</a>
+            <a href="/crear" class="text-gray-700 hover:text-[#315C95] transition">Crear</a>
+            <a href="/favoritos" class="text-gray-700 hover:text-[#315C95] transition">Favoritos</a>
+        </nav>
+
+        <!-- Acciones usuario -->
+        <div class="hidden md:flex items-center space-x-4">
+            <!-- Buscador -->
+            <form action="/buscar" method="get" class="relative">
+                <input type="text" name="q" placeholder="Buscar..." 
+                       class="border border-gray-300 rounded-full py-1 px-3 focus:outline-none focus:ring-2 focus:ring-[#315C95] focus:border-[#315C95] text-sm">
+                <button type="submit" class="absolute right-1 top-1 text-gray-500 hover:text-[#315C95]">🔍</button>
+            </form>
+
+            <!-- Avatar / perfil -->
+            {% if user.is_authenticated %}
+            <a href="/perfil" class="flex items-center space-x-2">
+                <div class="w-8 h-8 rounded-full bg-gray-300 overflow-hidden">
+                    {% if user.profile.avatar_url %}
+                    <img src="{{ user.profile.avatar_url }}" alt="{{ user.username }}" class="w-full h-full object-cover">
+                    {% endif %}
+                </div>
+                <span class="text-gray-700 font-medium">{{ user.username }}</span>
+            </a>
+            {% else %}
+            <a href="/login" class="text-gray-700 hover:text-[#315C95] font-semibold transition">Iniciar sesión</a>
+            {% endif %}
+        </div>
+
+        <!-- Menú hamburguesa móvil -->
+        <div class="md:hidden">
+            <button id="mobileMenuButton" class="text-gray-700 hover:text-[#315C95] focus:outline-none">
+                ☰
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Menú móvil -->
+    <div id="mobileMenu" class="md:hidden hidden bg-white shadow-md">
+        <nav class="px-4 pt-2 pb-4 space-y-1">
+            <a href="/" class="block text-gray-700 hover:text-[#315C95] transition">Inicio</a>
+            <a href="/baglists" class="block text-gray-700 hover:text-[#315C95] transition">BagLists</a>
+            <a href="/crear" class="block text-gray-700 hover:text-[#315C95] transition">Crear</a>
+            <a href="/favoritos" class="block text-gray-700 hover:text-[#315C95] transition">Favoritos</a>
+            {% if user.is_authenticated %}
+            <a href="/perfil" class="block text-gray-700 hover:text-[#315C95] transition">Perfil</a>
+            <a href="/logout" class="block text-gray-700 hover:text-[#315C95] transition">Cerrar sesión</a>
+            {% else %}
+            <a href="/login" class="block text-gray-700 hover:text-[#315C95] transition">Iniciar sesión</a>
+            {% endif %}
+        </nav>
+    </div>
+</header>
+
+<!-- JS menú móvil -->
+<script>
+    const mobileMenuButton = document.getElementById('mobileMenuButton');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+</script>

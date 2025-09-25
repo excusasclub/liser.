@@ -1,0 +1,31 @@
+<section class="mb-8 rounded-xl overflow-hidden shadow-lg bg-white">
+    <!-- Cabecera de sección -->
+    <div class="px-4 py-2 text-center bg-gradient-to-r from-[#315C95] to-[#4a73b8] shadow-md border-b-2 border-[#2a4d7a]">
+        <div class="text-base font-semibold text-white drop-shadow-sm">{{ section.title }}</div>
+    </div>
+    
+    <!-- Contenedor tabla -->
+    <div class="bg-[rgba(49,92,149,0.38)] shadow-inner">
+        <div class="rounded-none overflow-hidden">
+            <!-- Cabecera de tabla -->
+            <div class="grid grid-cols-[1fr_60px_60px_60px_100px] gap-2 px-3 py-2 text-sm font-semibold text-gray-700 border-b border-gray-300 bg-gradient-to-b from-gray-100 to-gray-200 shadow-sm">
+                <div>Producto</div>
+                <div class="text-center">Link</div>
+                <div class="text-center">Video</div>
+                <div class="text-center">Instagram</div>
+                <div class="text-center">Código</div>
+            </div>
+
+            <!-- Items -->
+            <div class="divide-y divide-gray-300">
+                {% for item in section.items.all %}
+                    {% include 'partials/baglist_item.html' with item=item %}
+                {% empty %}
+                <div class="px-4 py-4 text-center text-gray-500">
+                    <p class="text-sm">No hay items en esta sublista</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>

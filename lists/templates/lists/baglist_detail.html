@@ -1,181 +1,43 @@
+{% extends 'partials/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ baglist.title }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-white min-h-screen">
 
-    <div class="flex min-h-screen">
+{% block title %}{{ baglist.title }} | Liser{% endblock %}
 
-        <!-- Sidebar -->
-        <aside class="w-64 p-4 bg-[rgba(244,201,73,0.75)]">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4">Panel Lateral</h2>
-            <!-- Aquí puedes añadir más elementos del sidebar -->
-        </aside>
+{% block content %}
+<div class="flex min-h-screen">
 
-        <!-- Contenido principal -->
-        <main class="flex-1 p-6">
-            
-            <!-- Cabecera -->
-            <header class="mb-6">
-                <h1 class="text-2xl font-bold text-gray-800">{{ baglist.owner.user.username }} - {{ baglist.title }}</h1>
-            </header>
+    <!-- Sidebar -->
+    {% include 'partials/sidebar.html' %}
 
-            <!-- Info usuario -->
-            <div class="flex items-center justify-between mb-6 bg-white p-4 rounded shadow">
-                <div>
-                    <p class="text-gray-700">@{{ baglist.owner.handle }}</p>
-                    <p class="text-gray-500 text-sm">Última actualización: {{ baglist.updated_at|date:"d-m-Y || H:i" }}</p>
-                    <button id="openPanel" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded transition">Editar</button>
-                </div>
-                <p>aquí se puede insertar más cosas</p>
+    <!-- Contenido principal -->
+    <main class="flex-1 p-6">
+        {% include 'partials/header.html' %}
+
+        <!-- Bloque principal de la BagList -->
+        <section class="mb-6 bg-white p-4 rounded shadow">
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">{{ baglist.title }}</h2>
+            <p class="text-gray-600 mb-3">{{ baglist.description|truncatechars:300 }}</p>
+
+            <div class="flex flex-wrap gap-2 mb-3">
+                {% for tag_relation in baglist.baglisttag_set.all %}
+                    <span class="bg-gray-200 text-gray-800 px-2 py-1 rounded text-sm">{{ tag_relation.tag.name }}</span>
+                {% endfor %}
             </div>
 
-            <!-- Bloque principal -->
-            <section class="mb-6 bg-white p-4 rounded shadow">
-                <h2 class="text-xl font-semibold text-gray-800 mb-2">{{ baglist.title }}</h2>
-                <p class="text-gray-600 mb-3">{{ baglist.description|truncatechars:300 }}</p>
-                <div class="flex flex-wrap gap-2 mb-3">
-                    {% for tag_relation in baglist.baglisttag_set.all %}
-                        <span class="bg-gray-200 text-gray-800 px-2 py-1 rounded text-sm">{{ tag_relation.tag.name }}</span>
-                    {% endfor %}
-                </div>
-                <button class="text-yellow-400 text-xl">⭐️</button>
-            </section>
+            <button class="text-yellow-400 text-xl">⭐️</button>
+        </section>
 
-            <!-- Separador visual -->
-            <div class="my-10 p-5 bg-gray-100 text-center rounded">
-                <h2 class="text-gray-800 text-lg font-semibold">Separador Visual para usar</h2>
-            </div>
+        <!-- Sublistas -->
+        {% for section in baglist.sections.all %}
+            {% include 'partials/baglist_section.html' with section=section %}
+        {% endfor %}
 
-            <!-- Sublistas -->
-            {% for section in baglist.sections.all %}
-            <section class="mb-8 rounded-xl overflow-hidden shadow-lg bg-white">
-                <!-- Cabecera más estrecha con efecto 3D -->
-                <div class="px-4 py-2 text-center bg-gradient-to-r from-[#315C95] to-[#4a73b8] shadow-md border-b-2 border-[#2a4d7a]">
-                    <div class="text-base font-semibold text-white drop-shadow-sm">{{ section.title }}</div>
-                </div>
-                
-                <!-- Contenedor de la tabla con efecto 3D -->
-                <div class="bg-[rgba(49,92,149,0.38)] shadow-inner">
-                    <!-- Tabla -->
-                    <div class="rounded-none overflow-hidden">
-                        <!-- Cabecera de tabla -->
-                        <div class="grid grid-cols-[1fr_60px_60px_60px_100px] gap-2 px-3 py-2 text-sm font-semibold text-gray-700 border-b border-gray-300 bg-gradient-to-b from-gray-100 to-gray-200 shadow-sm">
-                            <div>Producto</div>
-                            <div class="text-center">Link</div>
-                            <div class="text-center">Video</div>
-                            <div class="text-center">Instagram</div>
-                            <div class="text-center">Código</div>
-                        </div>
+    </main>
+</div>
 
-                        <!-- Items -->
-                        <div class="divide-y divide-gray-300">
-                            {% for item in section.items.all %}
-                            <div class="grid grid-cols-[1fr_60px_60px_60px_100px] gap-2 px-3 py-2 bg-white border-b border-gray-200 hover:bg-gray-50 hover:shadow-sm transition-all duration-200 hover:transform hover:translate-x-1">
-                                <!-- Producto -->
-                                <div class="flex items-start space-x-2">
-                                    {% if item.snapshot.snap_image_url %}
-                                    <img src="{{ item.snapshot.snap_image_url }}" alt="{{ item.snapshot.snap_title }}" class="w-10 h-10 rounded-md object-cover shadow-md border border-gray-200">
-                                    {% else %}
-                                    <div class="w-10 h-10 bg-gray-300 flex items-center justify-center rounded-md shadow-md border border-gray-200">
-                                        <span class="text-gray-400 text-xs">Sin imagen</span>
-                                    </div>
-                                    {% endif %}
-                                    <div class="flex-1 min-w-0">
-                                        <div class="font-semibold text-gray-900 mb-0.5 drop-shadow-sm">{{ item.custom_title|default:item.snapshot.snap_title|default:"Item" }}</div>
-                                        <p class="text-gray-500 text-xs">{{ item.note|truncatechars:120 }}</p>
-                                    </div>
-                                </div>
+{% include 'lists/baglist_edition.html' %}
+{% endblock %}
 
-                                <!-- Link -->
-                                <div class="flex justify-center items-start pt-2">
-                                    {% if item.snapshot.canonical_url %}
-                                    <a href="{{ item.snapshot.canonical_url }}" target="_blank" class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:transform hover:scale-110 hover:shadow-md rounded-full p-1">
-                                        <img src="https://cdn-icons-png.flaticon.com/128/10276/10276957.png" alt="Ver Link" class="w-5 h-5 drop-shadow-sm">
-                                    </a>
-                                    {% else %}
-                                    <span class="text-gray-300 text-xs">-</span>
-                                    {% endif %}
-                                </div>
-
-                                <!-- Video -->
-                                <div class="flex justify-center items-start pt-2">
-                                    {% if item.snapshot.video_url %}
-                                    <a href="{{ item.snapshot.video_url }}" target="_blank" class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:transform hover:scale-110 hover:shadow-md rounded-full p-1">
-                                        <img src="https://cdn-icons-png.flaticon.com/128/1384/1384060.png" alt="Ver video" class="w-5 h-5 drop-shadow-sm">
-                                    </a>
-                                    {% else %}
-                                    <span class="text-gray-300 text-xs">-</span>
-                                    {% endif %}
-                                </div>
-
-                                <!-- Instagram -->
-                                <div class="flex justify-center items-start pt-2">
-                                    {% if item.snapshot.extra_links %}
-                                        {% for link in item.snapshot.extra_links %}
-                                            {% if link.type == "instagram" %}
-                                            <a href="{{ link.url }}" target="_blank" class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:transform hover:scale-110 hover:shadow-md rounded-full p-1">
-                                                <img src="https://cdn-icons-png.flaticon.com/128/2111/2111463.png" alt="Ver Post" class="w-5 h-5 drop-shadow-sm">
-                                            </a>
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% else %}
-                                    <span class="text-gray-300 text-xs">-</span>
-                                    {% endif %}
-                                </div>
-
-                                <!-- Código -->
-                                <div class="flex justify-center items-start pt-2">
-                                    {% if item.snapshot.coupon_code %}
-                                    <button onclick="copyCodeTailwind(this)" class="font-bold cursor-pointer hover:underline text-xs text-[#315C95] hover:transform hover:scale-105 transition-all duration-200 px-2 py-1 rounded hover:bg-blue-50 hover:shadow-sm" title="Copiar código">
-                                        {{ item.snapshot.coupon_code }}
-                                    </button>
-                                    {% else %}
-                                    <span class="text-gray-300 text-xs">-</span>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            {% empty %}
-                            <div class="px-4 py-4 text-center text-gray-500">
-                                <p class="text-sm">No hay items en esta sublista</p>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            </section>
-            {% endfor %}
-
-        </main>
-    </div>
-
-    <!-- JS Copiar Código -->
-    <script>
-        function copyCodeTailwind(el) {
-            const code = el.textContent.trim();
-            if(!code) return;
-            navigator.clipboard.writeText(code).then(() => {
-                const original = el.textContent;
-                el.textContent = "✅ Copiado";
-                el.classList.remove('text-[#315C95]');
-                el.classList.add('bg-green-100', 'text-green-800', 'px-1', 'rounded');
-                setTimeout(() => {
-                    el.textContent = original;
-                    el.classList.remove('bg-green-100', 'text-green-800', 'px-1', 'rounded');
-                    el.classList.add('text-[#315C95]');
-                }, 1000);
-            });
-        }
-
-        document.getElementById('openPanel').addEventListener('click', function() {
-            document.getElementById('editionPanel').classList.add('active');
-        });
-    </script>
-
-    {% include 'lists/baglist_edition.html' %}
-</body>
-</html>
+{% block extra_js %}
+<script src="{% static 'js/baglist.js' %}"></script>
+{% endblock %}

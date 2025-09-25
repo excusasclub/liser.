@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Liser{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-white min-h-screen">
+
+    <!-- Header global -->
+    {% include 'partials/header.html' %}
+
+    <!-- Contenido principal -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {% block content %}
+        <!-- Cada plantilla llenará este bloque -->
+        {% endblock %}
+    </main>
+
+    <!-- Footer opcional -->
+    <footer class="bg-gray-100 text-gray-700 text-sm py-4 mt-10 text-center">
+        © {{ now|date:"Y" }} Liser. Todos los derechos reservados.
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
