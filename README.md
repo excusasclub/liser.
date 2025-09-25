@@ -1,24 +1,8 @@
 # Liser ver2
 
-![Liser Logo](https://via.placeholder.com/150x50?text=Liser)
-
 **Liser** es una aplicación web desarrollada en **Django 5.2** que permite a influencers, creadores de contenido y cualquier usuario organizar y compartir **listas de productos**, llamadas **BagLists**, de manera visual, atractiva y estructurada.  
 
 Los seguidores pueden ver estas listas, inspirarse, guardar productos o añadirlos a sus propias listas. Para los creadores, Liser facilita la gestión y monetización de recomendaciones.
-
----
-
-## Tabla de contenidos
-
-- [Características](#características)
-- [Tecnologías](#tecnologías)
-- [Instalación y setup](#instalación-y-setup)
-- [Estructura del proyecto](#estructura-del-proyecto)
-- [Modelos principales](#modelos-principales)
-- [Administración](#administración)
-- [GitHub](#github)
-- [Contribución](#contribución)
-- [Licencia](#licencia)
 
 ---
 
@@ -48,3 +32,140 @@ Los seguidores pueden ver estas listas, inspirarse, guardar productos o añadirl
 
 ---
 
+## Requisitos previos
+
+- Python 3.11  
+- MySQL  
+- Git  
+
+---
+
+## Instalación y setup
+
+Clonar el repositorio:
+
+```
+git clone https://github.com/excusasclub/liser_ver2.git
+cd liser_ver2
+```
+
+Crear y activar el entorno virtual:
+
+```
+# Crear entorno virtual
+python -m venv venv
+
+# Windows PowerShell
+.\venv\Scripts\Activate.ps1
+
+# Windows CMD
+venv\Scripts\activate
+
+# Linux/macOS
+source venv/bin/activate
+```
+
+Instalar dependencias:
+
+```
+pip install -r requirements.txt
+```
+
+Configurar la base de datos en `settings.py`.
+
+Aplicar migraciones:
+
+```
+python manage.py makemigrations
+python manage.py migrate
+```
+
+Crear superusuario:
+
+```
+python manage.py createsuperuser
+```
+
+Iniciar servidor:
+
+```
+python manage.py runserver
+```
+
+Acceder al admin en:  
+http://127.0.0.1:8000/admin/
+
+---
+
+## Estructura del proyecto
+
+proyect_liser_ver2/
+│
+├─ accounts/          # Modelos de usuarios y perfiles  
+├─ common/            # Modelos base y utilidades  
+├─ catalog/           # Productos externos  
+├─ lists/             # BagLists, secciones, items, facetas, tags  
+├─ analytics/         # Modelos y lógica analítica  
+├─ api/               # Endpoints y API  
+├─ manage.py  
+├─ requirements.txt  
+└─ README.md  
+
+---
+
+## Modelos principales
+
+### BagLists
+- **BagList**: lista de productos de un usuario.  
+- **BagListSection**: secciones dentro de la lista.  
+- **BagListItem**: producto dentro de la sección.  
+- **BagListItemProductSnapshot**: snapshot de producto externo.  
+- **Tag / BagListTag**: etiquetado de listas.  
+- **FavoriteBagList / FavoriteProduct**: favoritos de usuarios.  
+
+### Facetas
+- **Facet**: tipo de faceta (country, season, use, duration).  
+- **FacetOption**: opciones de faceta (ej. España, Verano).  
+- **BagListFacetValue**: valores asignados a cada BagList.  
+
+### Campos de sección
+- **SectionFieldDef**: definición de campo personalizado.  
+- **BagListItemFieldValue**: valor concreto para un producto en la sección.  
+
+---
+
+## Administración
+
+El proyecto utiliza el admin estándar de Django.  
+
+Los modelos principales ya están registrados.  
+
+URL de admin local:  
+http://127.0.0.1:8000/admin/  
+
+Permite gestionar usuarios, BagLists, productos, facetas, tags, favoritos, etc.  
+
+---
+
+## GitHub
+
+Repositorio oficial:  
+https://github.com/excusasclub/liser_ver2  
+
+Branch principal: `main`  
+
+Commit inicial: proyecto Django ver2 completo con modelos, apps y configuración básica.  
+
+---
+
+## Licencia
+
+Este proyecto está bajo la licencia MIT.  
+Ver el archivo LICENSE para más información.  
+
+---
+
+## Contacto
+
+Email: elclubdelaexcusa@gmail.com  
+GitHub: [@excusasclub](https://github.com/excusasclub)
