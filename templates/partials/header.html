@@ -1,75 +1,131 @@
-<header class="bg-white shadow-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-
-        <!-- Logo -->
-        <div class="flex-shrink-0">
-            <a href="/" class="text-[#315C95] font-bold text-2xl">Liser</a>
-        </div>
-
-        <!-- Navegación principal -->
-        <nav class="hidden md:flex space-x-6">
-            <a href="/" class="text-gray-700 hover:text-[#315C95] transition">Inicio</a>
-            <a href="/baglists" class="text-gray-700 hover:text-[#315C95] transition">BagLists</a>
-            <a href="/crear" class="text-gray-700 hover:text-[#315C95] transition">Crear</a>
-            <a href="/favoritos" class="text-gray-700 hover:text-[#315C95] transition">Favoritos</a>
-        </nav>
-
-        <!-- Acciones usuario -->
-        <div class="hidden md:flex items-center space-x-4">
-            <!-- Buscador -->
-            <form action="/buscar" method="get" class="relative">
-                <input type="text" name="q" placeholder="Buscar..." 
-                       class="border border-gray-300 rounded-full py-1 px-3 focus:outline-none focus:ring-2 focus:ring-[#315C95] focus:border-[#315C95] text-sm">
-                <button type="submit" class="absolute right-1 top-1 text-gray-500 hover:text-[#315C95]">🔍</button>
-            </form>
-
-            <!-- Avatar / perfil -->
-            {% if user.is_authenticated %}
-            <a href="/perfil" class="flex items-center space-x-2">
-                <div class="w-8 h-8 rounded-full bg-gray-300 overflow-hidden">
-                    {% if user.profile.avatar_url %}
-                    <img src="{{ user.profile.avatar_url }}" alt="{{ user.username }}" class="w-full h-full object-cover">
-                    {% endif %}
+{% load static %}
+<header class="bg-white shadow sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+            <!-- Logo y menú principal -->
+            <div class="flex items-center">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="#" class="text-xl font-bold text-gray-900 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:rounded transition-colors duration-200">
+                        <span class="sr-only">Liser</span>
+                        Liser
+                    </a>
                 </div>
-                <span class="text-gray-700 font-medium">{{ user.username }}</span>
-            </a>
-            {% else %}
-            <a href="/login" class="text-gray-700 hover:text-[#315C95] font-semibold transition">Iniciar sesión</a>
-            {% endif %}
+                
+                <!-- Navegación desktop -->
+                <nav class="hidden md:ml-6 md:flex md:space-x-8 items-center" role="navigation" aria-label="Main navigation">
+                    <a href="#" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:rounded">Home</a>
+                    {% if user.is_authenticated %}
+                        <a href="#" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:rounded">Profile</a>
+                        <a href="#"  class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:rounded">My Lists</a>
+                        <a href="#" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:rounded">Create List</a>
+                    {% endif %}
+                </nav>
+            </div>
+            
+            <!-- Botones de autenticación / Menú móvil -->
+            <div class="flex items-center">
+                {% if user.is_authenticated %}
+                    <!-- Usuario autenticado -->
+                    <div class="hidden md:flex items-center space-x-4">
+                        <span class="text-sm text-gray-700 hidden lg:block">Welcome, {{ user.username }}!</span>
+                        <a href="#" 
+                           class="text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded px-3 py-2 text-sm font-medium transition-colors duration-200"
+                           role="button" 
+                           aria-label="Logout">
+                            Logout
+                        </a>
+                    </div>
+                {% else %}
+                    <!-- Usuario no autenticado -->
+                    <div class="hidden md:flex space-x-4">
+                        <a href="#" 
+                           class="text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded px-3 py-2 text-sm font-medium transition-colors duration-200"
+                           role="button" 
+                           aria-label="Login">
+                            Login
+                        </a>
+                        <a href="#" 
+                           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:rounded"
+                           role="button" 
+                           aria-label="Sign Up">
+                            Sign Up
+                        </a>
+                    </div>
+                {% endif %}
+                
+                <!-- Botón menú móvil -->
+                <div class="-mr-2 flex items-center md:hidden">
+                    <button type="button" id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500" aria-expanded="false" aria-label="Open main menu">
+                        <span class="sr-only">Open main menu</span>
+                        <!-- Icono menú hamburguesa -->
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <!-- Icono cerrar -->
+                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
         </div>
-
-        <!-- Menú hamburguesa móvil -->
-        <div class="md:hidden">
-            <button id="mobileMenuButton" class="text-gray-700 hover:text-[#315C95] focus:outline-none">
-                ☰
-            </button>
-        </div>
-
     </div>
 
     <!-- Menú móvil -->
-    <div id="mobileMenu" class="md:hidden hidden bg-white shadow-md">
-        <nav class="px-4 pt-2 pb-4 space-y-1">
-            <a href="/" class="block text-gray-700 hover:text-[#315C95] transition">Inicio</a>
-            <a href="/baglists" class="block text-gray-700 hover:text-[#315C95] transition">BagLists</a>
-            <a href="/crear" class="block text-gray-700 hover:text-[#315C95] transition">Crear</a>
-            <a href="/favoritos" class="block text-gray-700 hover:text-[#315C95] transition">Favoritos</a>
+    <div id="mobile-menu" class="hidden md:hidden">
+        <div class="pt-2 pb-3 space-y-1 bg-white shadow-lg rounded-lg mt-2">
+            <!-- Links de navegación -->
+            <a href="#" class="block px-4 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md mx-2 transition-colors duration-200">Home</a>
+            
             {% if user.is_authenticated %}
-            <a href="/perfil" class="block text-gray-700 hover:text-[#315C95] transition">Perfil</a>
-            <a href="/logout" class="block text-gray-700 hover:text-[#315C95] transition">Cerrar sesión</a>
+                <a href="#" class="block px-4 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md mx-2 transition-colors duration-200">Profile</a>
+                <a href="#" class="block px-4 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md mx-2 transition-colors duration-200">My Lists</a>
+                <a href="#" class="block px-4 py-2 text-base font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md mx-2 transition-colors duration-200">Create List</a>
+                
+                <!-- Bienvenida y logout -->
+                <div class="px-4 py-2 text-sm text-gray-500 border-t border-gray-200 mx-2">
+                    Welcome, {{ user.username }}!
+                </div>
+                <a href="#" class="block px-4 py-2 text-base font-medium text-gray-700 hover:text-red-600 hover:bg-gray-50 rounded-md mx-2 transition-colors duration-200">Logout</a>
             {% else %}
-            <a href="/login" class="block text-gray-700 hover:text-[#315C95] transition">Iniciar sesión</a>
+                <!-- Links para no autenticados -->
+                <a href="#" class="block px-4 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md mx-2 transition-colors duration-200">Login</a>
+                <a href="#"class="block px-4 py-2 text-base font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md mx-2 transition-colors duration-200">Sign Up</a>
             {% endif %}
-        </nav>
+        </div>
     </div>
 </header>
 
-<!-- JS menú móvil -->
 <script>
-    const mobileMenuButton = document.getElementById('mobileMenuButton');
-    const mobileMenu = document.getElementById('mobileMenu');
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuOpenIcon = mobileMenuButton.querySelector('[stroke-width="2"]:first-child');
+    const menuCloseIcon = mobileMenuButton.querySelector('[stroke-width="2"]:last-child');
 
-    mobileMenuButton.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
+    mobileMenuButton.addEventListener('click', function() {
+        // Toggle menu
+        const isExpanded = mobileMenu.classList.contains('hidden');
+        mobileMenu.classList.toggle('hidden', !isExpanded);
+        
+        // Toggle icons
+        menuOpenIcon.classList.toggle('hidden', !isExpanded);
+        menuCloseIcon.classList.toggle('hidden', isExpanded);
+        
+        // Update aria-expanded
+        mobileMenuButton.setAttribute('aria-expanded', isExpanded);
     });
+
+    // Cerrar menú al hacer click fuera
+    document.addEventListener('click', function(event) {
+        const isClickInsideHeader = mobileMenuButton.contains(event.target) || mobileMenu.contains(event.target);
+        if (!isClickInsideHeader && !mobileMenu.classList.contains('hidden')) {
+            mobileMenu.classList.add('hidden');
+            menuOpenIcon.classList.remove('hidden');
+            menuCloseIcon.classList.add('hidden');
+            mobileMenuButton.setAttribute('aria-expanded', 'false');
+        }
+    });
+});
 </script>
