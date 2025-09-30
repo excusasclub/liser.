@@ -7,19 +7,19 @@
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center">
                     <a href="#" class="text-xl font-bold text-gray-900 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:rounded transition-colors duration-200">
-                        <span class="sr-only">Liser</span>
-                        Liser
+                        <img src="https://visitarmerida.info/wp-content/uploads/Logo-Liser.png" alt="Liser Logo" class="h-24 w-auto">
                     </a>
                 </div>
                 
                 <!-- Navegación desktop -->
                 <nav class="hidden md:ml-6 md:flex md:space-x-8 items-center" role="navigation" aria-label="Main navigation">
-                    <a href="#" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:rounded">Home</a>
+                    <a href="#" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:rounded">Inicio</a>
                     {% if user.is_authenticated %}
-                        <a href="#" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:rounded">Profile</a>
-                        <a href="#"  class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:rounded">My Lists</a>
+                        <a href="#" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:rounded">Mi Perfil</a>
+                        <a href="#"  class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:rounded">Mis BagList</a>
                         <a href="#" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:rounded">Create List</a>
                     {% endif %}
+                    <span class="text-xs text-yellow-600 font-bold">(MENÚ ESCRITORIO)</span>
                 </nav>
             </div>
             
@@ -73,26 +73,24 @@
     </div>
 
     <!-- Menú móvil -->
-    <div id="mobile-menu" class="hidden md:hidden">
+    <div id="mobile-menu" class="hidden">
         <div class="pt-2 pb-3 space-y-1 bg-white shadow-lg rounded-lg mt-2">
-            <!-- Links de navegación -->
-            <a href="#" class="block px-4 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md mx-2 transition-colors duration-200">Home</a>
+            <a href="#" class="block px-4 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md mx-2 transition-colors duration-200">Inicio</a>
             
             {% if user.is_authenticated %}
-                <a href="#" class="block px-4 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md mx-2 transition-colors duration-200">Profile</a>
-                <a href="#" class="block px-4 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md mx-2 transition-colors duration-200">My Lists</a>
-                <a href="#" class="block px-4 py-2 text-base font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md mx-2 transition-colors duration-200">Create List</a>
+                <a href="#" class="block px-4 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md mx-2 transition-colors duration-200">Mi Perfil</a>
+                <a href="#" class="block px-4 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md mx-2 transition-colors duration-200">Mis BagLists</a>
+                <a href="#" class="block px-4 py-2 text-base font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md mx-2 transition-colors duration-200">Editar Baglists</a>
                 
-                <!-- Bienvenida y logout -->
                 <div class="px-4 py-2 text-sm text-gray-500 border-t border-gray-200 mx-2">
                     Welcome, {{ user.username }}!
                 </div>
                 <a href="#" class="block px-4 py-2 text-base font-medium text-gray-700 hover:text-red-600 hover:bg-gray-50 rounded-md mx-2 transition-colors duration-200">Logout</a>
             {% else %}
-                <!-- Links para no autenticados -->
                 <a href="#" class="block px-4 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md mx-2 transition-colors duration-200">Login</a>
                 <a href="#"class="block px-4 py-2 text-base font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md mx-2 transition-colors duration-200">Sign Up</a>
             {% endif %}
+            <span class="block text-xs text-green-600 font-bold px-4">(MENÚ MÓVIL)</span>
         </div>
     </div>
 </header>
@@ -101,30 +99,43 @@
 document.addEventListener('DOMContentLoaded', function() {
     const mobileMenuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
-    const menuOpenIcon = mobileMenuButton.querySelector('[stroke-width="2"]:first-child');
-    const menuCloseIcon = mobileMenuButton.querySelector('[stroke-width="2"]:last-child');
+    const menuOpenIcon = mobileMenuButton.querySelector('svg:nth-child(1)');
+    const menuCloseIcon = mobileMenuButton.querySelector('svg:nth-child(2)');
 
+    // Función para comprobar el tamaño de pantalla
+    function checkMenuType() {
+        if (window.innerWidth >= 768) {
+            console.log("💻 Mostrando MENÚ ESCRITORIO");
+        } else {
+            console.log("📱 Mostrando MENÚ MÓVIL (colapsado por defecto)");
+        }
+    }
+
+    // Print inicial
+    checkMenuType();
+
+    // Recalcular cuando cambie el tamaño (incluye modo responsive en Chrome)
+    window.addEventListener('resize', checkMenuType);
+
+    // Botón hamburguesa para abrir/cerrar menú móvil
     mobileMenuButton.addEventListener('click', function() {
-        // Toggle menu
-        const isExpanded = mobileMenu.classList.contains('hidden');
-        mobileMenu.classList.toggle('hidden', !isExpanded);
+        const isHidden = mobileMenu.classList.contains('hidden');
         
-        // Toggle icons
-        menuOpenIcon.classList.toggle('hidden', !isExpanded);
-        menuCloseIcon.classList.toggle('hidden', isExpanded);
+        // Toggle menú
+        mobileMenu.classList.toggle('hidden', !isHidden);
         
-        // Update aria-expanded
-        mobileMenuButton.setAttribute('aria-expanded', isExpanded);
-    });
+        // Toggle iconos
+        menuOpenIcon.classList.toggle('hidden', !isHidden);
+        menuCloseIcon.classList.toggle('hidden', isHidden);
+        
+        // Accesibilidad
+        mobileMenuButton.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
 
-    // Cerrar menú al hacer click fuera
-    document.addEventListener('click', function(event) {
-        const isClickInsideHeader = mobileMenuButton.contains(event.target) || mobileMenu.contains(event.target);
-        if (!isClickInsideHeader && !mobileMenu.classList.contains('hidden')) {
-            mobileMenu.classList.add('hidden');
-            menuOpenIcon.classList.remove('hidden');
-            menuCloseIcon.classList.add('hidden');
-            mobileMenuButton.setAttribute('aria-expanded', 'false');
+        // Print debug
+        if (isHidden) {
+            console.log("👉 MENÚ MÓVIL abierto");
+        } else {
+            console.log("❌ MENÚ MÓVIL cerrado");
         }
     });
 });
