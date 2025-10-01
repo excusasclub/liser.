@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>{{ baglist.name }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -9,7 +10,7 @@
 <body class="bg-white min-h-screen">
 
     <div class="flex min-h-screen">
-
+ 
         <!-- Sidebar -->
         <aside class="w-64 p-4 bg-[rgba(244,201,73,0.75)]">
             <h2 class="text-lg font-semibold text-gray-800 mb-4">Panel Lateral</h2>
@@ -63,19 +64,19 @@
                 <div class="bg-[rgba(49,92,149,0.38)] shadow-inner">
                     <!-- Tabla -->
                     <div class="rounded-none overflow-hidden">
-                        <!-- Cabecera de tabla -->
-                        <div class="grid grid-cols-[1fr_60px_60px_60px_100px] gap-2 px-3 py-2 text-sm font-semibold text-gray-700 border-b border-gray-300 bg-gradient-to-b from-gray-100 to-gray-200 shadow-sm">
+                        <!-- Cabecera de tabla (solo visible en escritorio) -->
+                        <div class="hidden md:grid md:grid-cols-[1fr_60px_60px_60px_100px] gap-2 px-3 py-2 text-sm font-semibold text-gray-700 border-b border-gray-300 bg-gradient-to-b from-gray-100 to-gray-200 shadow-sm">
                             <div>Producto</div>
                             <div class="text-center">Link</div>
                             <div class="text-center">Video</div>
                             <div class="text-center">Instagram</div>
                             <div class="text-center">Código</div>
                         </div>
-
+ 
                         <!-- Items -->
                         <div class="divide-y divide-gray-300">
                             {% for item_relation in sublist.tbaglist_items.all %}
-                            <div class="grid grid-cols-[1fr_60px_60px_60px_100px] gap-2 px-3 py-2 bg-white border-b border-gray-200 hover:bg-gray-50 hover:shadow-sm transition-all duration-200 hover:transform hover:translate-x-1">
+                            <div class="p-3 md:grid md:grid-cols-[1fr_60px_60px_60px_100px] md:gap-2 md:p-2 bg-white border-b border-gray-200 hover:bg-gray-50 transition-all duration-200">
                                 <!-- Producto -->
                                 <div class="flex items-start space-x-2">
                                     {% if item_relation.item.image_url %}
@@ -90,42 +91,44 @@
                                         <p class="text-gray-500 text-xs">{{ item_relation.item.micro_description|truncatechars:120 }}</p>
                                     </div>
                                 </div>
-
-                                <!-- Link -->
-                                <div class="flex justify-center items-start pt-2">
-                                    {% if item_relation.item.link_url %}
-                                    <a href="{{ item_relation.item.link_url }}" target="_blank" class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:transform hover:scale-110 hover:shadow-md rounded-full p-1">
-                                        <img src="https://cdn-icons-png.flaticon.com/128/10276/10276957.png" alt="Ver Link" class="w-5 h-5 drop-shadow-sm">
-                                    </a>
-                                    {% else %}
-                                    <span class="text-gray-300 text-xs">-</span>
-                                    {% endif %}
-                                </div>
-
-                                <!-- Video -->
-                                <div class="flex justify-center items-start pt-2">
-                                    {% if item_relation.item.video_url %}
-                                    <a href="{{ item_relation.item.video_url }}" target="_blank" class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:transform hover:scale-110 hover:shadow-md rounded-full p-1">
-                                        <img src="https://cdn-icons-png.flaticon.com/128/1384/1384060.png" alt="Ver video" class="w-5 h-5 drop-shadow-sm">
-                                    </a>
-                                    {% else %}
-                                    <span class="text-gray-300 text-xs">-</span>
-                                    {% endif %}
-                                </div>
-
-                                <!-- Instagram -->
-                                <div class="flex justify-center items-start pt-2">
-                                    {% if item_relation.item.instagram_url %}
-                                    <a href="{{ item_relation.item.instagram_url }}" target="_blank" class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:transform hover:scale-110 hover:shadow-md rounded-full p-1">
-                                        <img src="https://cdn-icons-png.flaticon.com/128/2111/2111463.png" alt="Ver Post" class="w-5 h-5 drop-shadow-sm">
-                                    </a>
-                                    {% else %}
-                                    <span class="text-gray-300 text-xs">-</span>
-                                    {% endif %}
-                                </div>
-
-                                <!-- Código -->
-                                <div class="flex justify-center items-start pt-2">
+ 
+                                <!-- Contenedor para acciones (links, código) que se adapta a móvil -->
+                                <div class="flex justify-around items-center mt-3 pt-3 border-t border-gray-200 md:border-t-0 md:mt-0 md:pt-0 md:grid md:grid-cols-4 md:gap-2">
+                                    <!-- Link -->
+                                    <div class="flex justify-center items-center">
+                                        {% if item_relation.item.link_url %}
+                                        <a href="{{ item_relation.item.link_url }}" target="_blank" class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:transform hover:scale-110 hover:shadow-md rounded-full p-1">
+                                            <img src="https://cdn-icons-png.flaticon.com/128/10276/10276957.png" alt="Ver Link" class="w-5 h-5 drop-shadow-sm">
+                                        </a>
+                                        {% else %}
+                                        <span class="text-gray-300 text-xs">-</span>
+                                        {% endif %}
+                                    </div>
+ 
+                                    <!-- Video -->
+                                    <div class="flex justify-center items-center">
+                                        {% if item_relation.item.video_url %}
+                                        <a href="{{ item_relation.item.video_url }}" target="_blank" class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:transform hover:scale-110 hover:shadow-md rounded-full p-1">
+                                            <img src="https://cdn-icons-png.flaticon.com/128/1384/1384060.png" alt="Ver video" class="w-5 h-5 drop-shadow-sm">
+                                        </a>
+                                        {% else %}
+                                        <span class="text-gray-300 text-xs">-</span>
+                                        {% endif %}
+                                    </div>
+ 
+                                    <!-- Instagram -->
+                                    <div class="flex justify-center items-center">
+                                        {% if item_relation.item.instagram_url %}
+                                        <a href="{{ item_relation.item.instagram_url }}" target="_blank" class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:transform hover:scale-110 hover:shadow-md rounded-full p-1">
+                                            <img src="https://cdn-icons-png.flaticon.com/128/2111/2111463.png" alt="Ver Post" class="w-5 h-5 drop-shadow-sm">
+                                        </a>
+                                        {% else %}
+                                        <span class="text-gray-300 text-xs">-</span>
+                                        {% endif %}
+                                    </div>
+ 
+                                    <!-- Código -->
+                                    <div class="flex justify-center items-center">
                                     {% if item_relation.item.discount_code %}
                                     <button onclick="copyCodeTailwind(this)" class="font-bold cursor-pointer hover:underline text-xs text-[#315C95] hover:transform hover:scale-105 transition-all duration-200 px-2 py-1 rounded hover:bg-blue-50 hover:shadow-sm" title="Copiar código">
                                         {{ item_relation.item.discount_code }}
@@ -133,6 +136,7 @@
                                     {% else %}
                                     <span class="text-gray-300 text-xs">-</span>
                                     {% endif %}
+                                </div>
                                 </div>
                             </div>
                             {% empty %}
