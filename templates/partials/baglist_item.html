@@ -1,56 +1,174 @@
-<div class="grid grid-cols-[1fr_60px_60px_60px_100px] gap-2 px-3 py-2 bg-white border-b border-gray-200 hover:bg-gray-50 hover:shadow-sm transition-all duration-200 hover:transform hover:translate-x-1">
-    <!-- Producto -->
-    <div class="flex items-start space-x-2">
-        {% if item.snapshot.snap_image_url %}
-        <img src="{{ item.snapshot.snap_image_url }}" alt="{{ item.snapshot.snap_title }}" class="w-10 h-10 rounded-md object-cover shadow-md border border-gray-200">
-        {% else %}
-        <div class="w-10 h-10 bg-gray-300 flex items-center justify-center rounded-md shadow-md border border-gray-200">
-            <span class="text-gray-400 text-xs">Sin imagen</span>
+<div class="item-mobile bg-white border-b border-gray-200 hover:bg-gray-50 hover:shadow-sm transition-all duration-200">
+    
+    <!-- FILA 1: Imagen + Título + Botón (siempre visible) -->
+    <div class="grid grid-cols-[50px_1fr_40px] md:grid-cols-[60px_1fr_60px_60px_60px_100px] gap-2 px-3 py-2 items-start md:items-center">
+        
+        <!-- Imagen -->
+        <div class="flex items-center">
+            {% if item.snapshot.snap_image_url %}
+            <img src="{{ item.snapshot.snap_image_url }}" alt="{{ item.snapshot.snap_title }}" 
+                 class="w-10 h-10 rounded-md object-cover shadow-md border border-gray-200">
+            {% else %}
+            <div class="w-10 h-10 bg-gray-300 flex items-center justify-center rounded-md shadow-md border border-gray-200">
+                <span class="text-gray-400 text-xs">Sin imagen</span>
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
-        <div class="flex-1 min-w-0">
-            <div class="font-semibold text-gray-900 mb-0.5 drop-shadow-sm">{{ item.custom_title|default:item.snapshot.snap_title|default:"Item" }}</div>
-            <p class="text-gray-500 text-xs">{{ item.note|truncatechars:120 }}</p>
+
+        <!-- Título y Descripción -->
+        <div class="flex flex-col min-w-0">
+            {% if item.snapshot.canonical_url %}
+            <a href="{{ item.snapshot.canonical_url }}" target="_blank" 
+               class="font-semibold text-gray-900 drop-shadow-sm text-sm md:text-base hover:underline line-clamp-2">
+                {{ item.custom_title|default:item.snapshot.snap_title|default:"Item" }}
+            </a>
+            {% else %}
+            <div class="font-semibold text-gray-900 drop-shadow-sm text-sm md:text-base line-clamp-2">
+                {{ item.custom_title|default:item.snapshot.snap_title|default:"Item" }}
+            </div>
+            {% endif %}
+            
+            {% if item.note %}
+            <p class="text-gray-500 text-xs mt-0.5">
+                {{ item.note|truncatechars:120 }}
+            </p>
+            {% endif %}
+        </div>
+
+        <!-- Botón desplegar (solo móvil) -->
+        <div class="md:hidden flex items-center justify-center">
+            <button class="text-gray-400 text-sm p-1 hover:text-gray-600 rounded transition-transform toggle-btn" 
+                    onclick="const details = this.closest('.item-mobile').querySelector('.mobile-details'); details.classList.toggle('hidden'); this.classList.toggle('rotate-180');">
+                ⤵️
+            </button>
+        </div>
+
+        <!-- Columnas en Desktop (ocultas en móvil) -->
+        <!-- Link -->
+        <div class="hidden md:flex justify-center items-center">
+            {% if item.snapshot.canonical_url %}
+            <a href="{{ item.snapshot.canonical_url }}" target="_blank" 
+               class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:transform hover:scale-110 hover:shadow-md rounded-full p-1">
+                <img src="https://cdn-icons-png.flaticon.com/128/10276/10276957.png" alt="Ver Link" class="w-5 h-5 drop-shadow-sm">
+            </a>
+            {% else %}<span class="text-gray-300 text-xs">-</span>{% endif %}
+        </div>
+
+        <!-- Video -->
+        <div class="hidden md:flex justify-center items-center">
+            {% if item.snapshot.video_url %}
+            <a href="{{ item.snapshot.video_url }}" target="_blank" 
+               class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:transform hover:scale-110 hover:shadow-md rounded-full p-1">
+                <img src="https://cdn-icons-png.flaticon.com/128/1384/1384060.png" alt="Ver video" class="w-5 h-5 drop-shadow-sm">
+            </a>
+            {% else %}<span class="text-gray-300 text-xs">-</span>{% endif %}
+        </div>
+
+        <!-- Instagram -->
+        <div class="hidden md:flex justify-center items-center">
+            {% if item.snapshot.extra_links %}
+                {% for link in item.snapshot.extra_links %}
+                    {% if link.type == "instagram" %}
+                    <a href="{{ link.url }}" target="_blank" 
+                       class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:transform hover:scale-110 hover:shadow-md rounded-full p-1">
+                        <img src="https://cdn-icons-png.flaticon.com/128/2111/2111463.png" alt="Ver Post" class="w-5 h-5 drop-shadow-sm">
+                    </a>
+                    {% endif %}
+                {% endfor %}
+            {% else %}<span class="text-gray-300 text-xs">-</span>{% endif %}
+        </div>
+
+        <!-- Código -->
+        <div class="hidden md:flex justify-center items-center">
+            {% if item.snapshot.coupon_code %}
+            <button onclick="copyCodeTailwind(this)" 
+                    class="font-bold cursor-pointer hover:underline text-xs text-[#315C95] hover:transform hover:scale-105 transition-all duration-200 px-2 py-1 rounded hover:bg-blue-50 hover:shadow-sm" 
+                    title="Copiar código">
+                {{ item.snapshot.coupon_code }}
+            </button>
+            {% else %}<span class="text-gray-300 text-xs">-</span>{% endif %}
         </div>
     </div>
 
-    <!-- Link -->
-    <div class="flex justify-center items-start pt-2">
-        {% if item.snapshot.canonical_url %}
-        <a href="{{ item.snapshot.canonical_url }}" target="_blank" class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:transform hover:scale-110 hover:shadow-md rounded-full p-1">
-            <img src="https://cdn-icons-png.flaticon.com/128/10276/10276957.png" alt="Ver Link" class="w-5 h-5 drop-shadow-sm">
-        </a>
-        {% else %}<span class="text-gray-300 text-xs">-</span>{% endif %}
-    </div>
-
-    <!-- Video -->
-    <div class="flex justify-center items-start pt-2">
-        {% if item.snapshot.video_url %}
-        <a href="{{ item.snapshot.video_url }}" target="_blank" class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:transform hover:scale-110 hover:shadow-md rounded-full p-1">
-            <img src="https://cdn-icons-png.flaticon.com/128/1384/1384060.png" alt="Ver video" class="w-5 h-5 drop-shadow-sm">
-        </a>
-        {% else %}<span class="text-gray-300 text-xs">-</span>{% endif %}
-    </div>
-
-    <!-- Instagram -->
-    <div class="flex justify-center items-start pt-2">
-        {% if item.snapshot.extra_links %}
-            {% for link in item.snapshot.extra_links %}
-                {% if link.type == "instagram" %}
-                <a href="{{ link.url }}" target="_blank" class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:transform hover:scale-110 hover:shadow-md rounded-full p-1">
-                    <img src="https://cdn-icons-png.flaticon.com/128/2111/2111463.png" alt="Ver Post" class="w-5 h-5 drop-shadow-sm">
+    <!-- FILA 2: Detalles móvil (solo visible en móvil cuando se despliega) -->
+    <div class="mobile-details hidden md:hidden px-3 pb-3 pt-1">
+        <div class="grid grid-cols-4 gap-3 bg-gray-50 rounded-lg p-3 border border-gray-200">
+            
+            <!-- Link -->
+            <div class="flex flex-col items-center justify-center space-y-1">
+                {% if item.snapshot.canonical_url %}
+                <a href="{{ item.snapshot.canonical_url }}" target="_blank" 
+                   class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:transform hover:scale-110 hover:shadow-md rounded-full p-1">
+                    <img src="https://cdn-icons-png.flaticon.com/128/10276/10276957.png" alt="Ver Link" class="w-6 h-6 drop-shadow-sm">
                 </a>
+                <span class="text-xs text-gray-600">Link</span>
+                {% else %}
+                <span class="text-gray-300 text-xs">-</span>
+                <span class="text-xs text-gray-400">Link</span>
                 {% endif %}
-            {% endfor %}
-        {% else %}<span class="text-gray-300 text-xs">-</span>{% endif %}
-    </div>
+            </div>
 
-    <!-- Código -->
-    <div class="flex justify-center items-start pt-2">
-        {% if item.snapshot.coupon_code %}
-        <button onclick="copyCodeTailwind(this)" class="font-bold cursor-pointer hover:underline text-xs text-[#315C95] hover:transform hover:scale-105 transition-all duration-200 px-2 py-1 rounded hover:bg-blue-50 hover:shadow-sm" title="Copiar código">
-            {{ item.snapshot.coupon_code }}
-        </button>
-        {% else %}<span class="text-gray-300 text-xs">-</span>{% endif %}
+            <!-- Video -->
+            <div class="flex flex-col items-center justify-center space-y-1">
+                {% if item.snapshot.video_url %}
+                <a href="{{ item.snapshot.video_url }}" target="_blank" 
+                   class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:transform hover:scale-110 hover:shadow-md rounded-full p-1">
+                    <img src="https://cdn-icons-png.flaticon.com/128/1384/1384060.png" alt="Ver video" class="w-6 h-6 drop-shadow-sm">
+                </a>
+                <span class="text-xs text-gray-600">Video</span>
+                {% else %}
+                <span class="text-gray-300 text-xs">-</span>
+                <span class="text-xs text-gray-400">Video</span>
+                {% endif %}
+            </div>
+
+            <!-- Instagram -->
+            <div class="flex flex-col items-center justify-center space-y-1">
+                {% if item.snapshot.extra_links %}
+                    {% for link in item.snapshot.extra_links %}
+                        {% if link.type == "instagram" %}
+                        <a href="{{ link.url }}" target="_blank" 
+                           class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:transform hover:scale-110 hover:shadow-md rounded-full p-1">
+                            <img src="https://cdn-icons-png.flaticon.com/128/2111/2111463.png" alt="Ver Post" class="w-6 h-6 drop-shadow-sm">
+                        </a>
+                        <span class="text-xs text-gray-600">Post</span>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                <span class="text-gray-300 text-xs">-</span>
+                <span class="text-xs text-gray-400">Post</span>
+                {% endif %}
+            </div>
+
+            <!-- Código -->
+            <div class="flex flex-col items-center justify-center space-y-1">
+                {% if item.snapshot.coupon_code %}
+                <button onclick="copyCodeTailwind(this)" 
+                        class="font-bold cursor-pointer hover:underline text-xs text-[#315C95] hover:transform hover:scale-105 transition-all duration-200 px-2 py-1 rounded hover:bg-blue-50 hover:shadow-sm" 
+                        title="Copiar código">
+                    {{ item.snapshot.coupon_code }}
+                </button>
+                <span class="text-xs text-gray-600">Código</span>
+                {% else %}
+                <span class="text-gray-300 text-xs">-</span>
+                <span class="text-xs text-gray-400">Código</span>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+.toggle-btn {
+    transition: transform 0.3s ease;
+}
+.toggle-btn.rotate-180 {
+    transform: rotate(180deg);
+}
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+</style>
