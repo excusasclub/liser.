@@ -1,0 +1,87 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block title %}Editar: {{ baglist.title }} | Liser{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen">
+
+    <!-- Sidebar -->
+    {% include 'partials/sidebar.html' %}
+
+    <!-- Contenido principal -->
+    <main class="flex-1 p-6">
+
+        <section class="mb-6 rounded-xl shadow-lg mx-auto max-w-4xl bg-[#99CB8A]/30 border border-[#8AB77A]/50">
+            <div class="flex items-center justify-between px-4 py-2">
+                <!-- Título centrado, tamaño aumentado -->
+                <h2 class="flex-1 text-center text-lg font-semibold text-gray-900 truncate">
+                    Editar BagList
+                </h2>
+            </div>
+
+            <!-- Formulario de edición -->
+            <form method="post" class="px-4 py-4 space-y-4">
+                {% csrf_token %}
+
+                <!-- Título -->
+                <div>
+                    {{ form.title.label_tag }}
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <p class="text-red-500 text-sm">{{ form.title.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Descripción -->
+                <div>
+                    {{ form.description.label_tag }}
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                        <p class="text-red-500 text-sm">{{ form.description.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Visibilidad -->
+                <div>
+                    {{ form.visibility.label_tag }}
+                    {{ form.visibility }}
+                    {% if form.visibility.errors %}
+                        <p class="text-red-500 text-sm">{{ form.visibility.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Cover image -->
+                <div>
+                    {{ form.cover_image_url.label_tag }}
+                    {{ form.cover_image_url }}
+                    {% if form.cover_image_url.errors %}
+                        <p class="text-red-500 text-sm">{{ form.cover_image_url.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Allow forks -->
+                <div class="flex items-center space-x-2">
+                    {{ form.allow_forks }}
+                    {{ form.allow_forks.label_tag }}
+                    {% if form.allow_forks.errors %}
+                        <p class="text-red-500 text-sm">{{ form.allow_forks.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Botón guardar -->
+                <div class="flex justify-end">
+                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                        Guardar cambios
+                    </button>
+                </div>
+            </form>
+        </section>
+
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/baglist.js' %}"></script>
+{% endblock %}
