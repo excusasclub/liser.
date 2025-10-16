@@ -209,9 +209,12 @@ class Migration(migrations.Migration):
             model_name='baglistitem',
             constraint=models.UniqueConstraint(fields=('baglist', 'position'), name='uniq_item_baglist_pos'),
         ),
-        migrations.AlterUniqueTogether(
-            name='facetoption',
-            unique_together={('facet', 'code')},
+        migrations.AddConstraint(
+            model_name='facetoption',
+            constraint=models.UniqueConstraint(
+                fields=('facet', 'code'),
+                name='uniq_facet_option_code',
+            ),
         ),
         migrations.AddIndex(
             model_name='baglistfacetvalue',
@@ -229,9 +232,12 @@ class Migration(migrations.Migration):
             model_name='favoriteproduct',
             constraint=models.UniqueConstraint(fields=('profile', 'item'), name='uniq_fav_item'),
         ),
-        migrations.AlterUniqueTogether(
-            name='sectionfielddef',
-            unique_together={('section', 'key')},
+        migrations.AddConstraint(
+            model_name='sectionfielddef',
+            constraint=models.UniqueConstraint(
+                fields=('section', 'key'),
+                name='uniq_section_field_key',
+            ),
         ),
         migrations.AddIndex(
             model_name='baglistitemfieldvalue',
@@ -245,9 +251,12 @@ class Migration(migrations.Migration):
             model_name='baglistitemfieldvalue',
             index=models.Index(fields=['field', 'value_enum'], name='lists_bagli_field_i_c0b1c2_idx'),
         ),
-        migrations.AlterUniqueTogether(
-            name='baglistitemfieldvalue',
-            unique_together={('item', 'field')},
+        migrations.AddConstraint(
+            model_name='baglistitemfieldvalue',
+            constraint=models.UniqueConstraint(
+                fields=('item', 'field'),
+                name='uniq_item_field_value',
+            ),
         ),
         migrations.AddConstraint(
             model_name='tag',
