@@ -384,7 +384,12 @@ class FacetOption(TimeStampedModel):
     """Metadatos extra (iconos, ISO, etc.)"""
 
     class Meta:
-        unique_together = ("facet", "code")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["facet", "code"],
+                name="uniq_facet_option_code",
+            )
+        ]
         """Evita duplicados: no puede haber dos opciones iguales para la misma faceta"""
 
     def __str__(self):
@@ -481,7 +486,12 @@ class SectionFieldDef(TimeStampedModel):
     """Indica si es columna destacada en la UI"""
 
     class Meta:
-        unique_together = ("section", "key")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["section", "key"],
+                name="uniq_section_field_key",
+            )
+        ]
         """No se pueden repetir keys dentro de la misma sección"""
 
     def __str__(self):
@@ -513,7 +523,12 @@ class BagListItemFieldValue(TimeStampedModel):
     value_url = models.URLField(blank=True)
 
     class Meta:
-        unique_together = ("item", "field")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["item", "field"],
+                name="uniq_item_field_value",
+            )
+        ]
         """Un item no puede tener dos valores para el mismo campo"""
         indexes = [
             models.Index(fields=["field", "value_number"]),
