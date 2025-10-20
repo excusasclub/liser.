@@ -1,0 +1,52 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block title %}Editor de BagLists | Liser{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen">
+
+  <!-- Sidebar -->
+  {% include 'partials/sidebar.html' %}
+
+  <!-- Contenido principal -->
+  <main class="flex-1 p-6 mx-auto max-w-5xl space-y-6">
+
+    <!-- Selector de BagList -->
+    <section class="rounded-xl shadow-lg mx-auto bg-[#99CB8A]/30 border border-[#8AB77A]/50 p-5">
+      <h2 class="text-center text-lg font-semibold text-gray-900 mb-3">Selecciona una BagList</h2>
+
+      <div class="flex items-center justify-center gap-3">
+        <select
+          id="baglist-selector"
+          name="baglist_id"
+          class="w-full max-w-md rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#99CB8A] focus:border-[#8AB77A] transition"
+          hx-get="{% url 'lists:htmx_baglist_sections' %}"
+          hx-trigger="change"
+          hx-target="#baglist-sections"
+          hx-swap="innerHTML"
+          hx-indicator="#sections-loading"
+        >
+          <option value="">— Elige una BagList —</option>
+          {% for bl in baglists %}
+            <option value="{{ bl.id }}">{{ bl.title }}</option>
+          {% endfor %}
+        </select>
+        <span id="sections-loading" class="htmx-indicator text-sm text-gray-600">Cargando…</span>
+      </div>
+    </section>
+
+    <!-- Contenedor donde se renderizan las secciones -->
+    <section id="baglist-sections" class="space-y-4"></section>
+
+    <!-- Zona de items globales del usuario (en siguiente paso) -->
+    <section id="user-items" class="space-y-4"></section>
+
+  </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/htmx.org@1.9.12"></script>
+<script src="{% static 'js/baglist_edit.js' %}"></script>
+{% endblock %}

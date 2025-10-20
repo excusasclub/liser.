@@ -1,0 +1,116 @@
+{% for section in baglist.sections.all %}
+<section class="mb-8 rounded-xl overflow-hidden shadow-lg bg-white">
+
+    <!-- Cabecera editable solo del nombre de la sección -->
+    <div class="px-4 py-2 text-center bg-gradient-to-r from-[#315C95] to-[#4a73b8] shadow-md border-b-2 border-[#2a4d7a] flex justify-between items-center">
+        <input type="text"
+               value="{{ section.title }}"
+               data-section-id="{{ section.id }}"
+               class="text-base font-semibold text-white bg-transparent border-b border-white/50 focus:outline-none focus:border-white px-2 py-1 w-2/3"
+               onchange="updateSectionTitle(this)">
+        <div class="flex gap-2">
+            <button class="text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 transition"
+                    hx-get="{% url 'lists:htmx_item_picker' %}?section_id={{ section.id }}"
+                    hx-target="#item-picker"
+                    hx-trigger="click"
+                    hx-swap="innerHTML">
+                + Item
+            </button>
+            <button class="text-xs bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 transition"
+                    onclick="deleteSection('{{ section.id }}')">✕</button>
+        </div>
+    </div>
+
+    <!-- Contenedor de tabla -->
+    <div class="bg-[rgba(49,92,149,0.38)] shadow-inner">
+        <div class="rounded-none overflow-hidden">
+
+            <!-- Cabecera de tabla -->
+            <div class="hidden md:grid grid-cols-[1fr_60px_60px_60px_100px_60px] gap-2 px-3 py-2 text-sm font-semibold text-gray-700 border-b border-gray-300 bg-gradient-to-b from-gray-100 to-gray-200 shadow-sm">
+                <div>Producto</div>
+                <div class="text-center">Link</div>
+                <div class="text-center">Video</div>
+                <div class="text-center">Instagram</div>
+                <div class="text-center">Código</div>
+                <div class="text-center">Acciones</div>
+            </div>
+
+            <!-- Items -->
+            <div class="divide-y divide-gray-300">
+                {% for item in section.items.all %}
+                <div class="grid grid-cols-[1fr_60px_60px_60px_100px_60px] px-3 py-2 items-center text-sm hover:bg-gray-50 transition">
+                    <!-- Nombre del producto (sin edición) -->
+                    <div class="font-semibold text-gray-900 drop-shadow-sm text-sm md:text-base line-clamp-2">
+                        {{ item.custom_title|default:item.snapshot.snap_title|default:"Item" }}
+                    </div>
+
+                    <!-- Link -->
+                    <div class="text-center">
+                        {% if item.snapshot.canonical_url %}
+                        <a href="{{ item.snapshot.canonical_url }}" target="_blank"
+                           class="hover:opacity-70 transition text-[#315C95] hover:scale-110 inline-block">
+                            🔗
+                        </a>
+                        {% else %}<span class="text-gray-300 text-xs">-</span>{% endif %}
+                    </div>
+
+                    <!-- Video -->
+                    <div class="text-center">
+                        {% if item.snapshot.video_url %}
+                        <a href="{{ item.snapshot.video_url }}" target="_blank"
+                           class="hover:opacity-70 transition text-[#315C95] hover:scale-110 inline-block">
+                            ▶️
+                        </a>
+                        {% else %}<span class="text-gray-300 text-xs">-</span>{% endif %}
+                    </div>
+
+                    <!-- Instagram -->
+                    <div class="text-center">
+                        {% if item.snapshot.extra_links %}
+                            {% for link in item.snapshot.extra_links %}
+                                {% if link.type == "instagram" %}
+                                <a href="{{ link.url }}" target="_blank"
+                                   class="hover:opacity-70 transition text-[#315C95] hover:scale-110 inline-block">
+                                    📸
+                                </a>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}<span class="text-gray-300 text-xs">-</span>{% endif %}
+                    </div>
+
+                    <!-- Código -->
+                    <div class="text-center">
+                        {% if item.snapshot.coupon_code %}
+                        <button onclick="copyCodeTailwind(this)"
+                                class="font-bold cursor-pointer hover:underline text-xs text-[#315C95] hover:scale-105 transition px-2 py-1 rounded hover:bg-blue-50"
+                                title="Copiar código">
+                            {{ item.snapshot.coupon_code }}
+                        </button>
+                        {% else %}<span class="text-gray-300 text-xs">-</span>{% endif %}
+                    </div>
+
+                    <!-- Acción -->
+                    <div class="text-center">
+                        <button class="text-red-600 hover:text-red-800 text-xs font-semibold"
+                                onclick="removeItemFromSection('{{ section.id }}', '{{ item.id }}')">
+                            Quitar
+                        </button>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="px-4 py-4 text-center text-gray-500">
+                    <p class="text-sm">No hay items en esta sublista</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% empty %}
+<div class="text-center text-gray-600 py-6 border rounded bg-gray-50">
+    Esta BagList no tiene secciones.
+</div>
+{% endfor %}
+
+<!-- Contenedor donde HTMX cargará el modal de selección de items -->
+<div id="item-picker"></div>
