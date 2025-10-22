@@ -24,14 +24,16 @@ def htmx_baglist_sections(request):
 # === Item Picker ===
 @login_required
 def htmx_item_picker(request):
+    """Muestra un listado rápido de items del usuario para asociar a una subBagList."""
     section_id = request.GET.get("section_id")
     profile = request.user.profile
 
+    # Filtra los últimos 30 items del usuario
     user_items = (
         BagListItem.objects
         .filter(baglist__owner=profile)
         .select_related("snapshot")
-        .order_by("-created_at")[:100]
+        .order_by("-created_at")[:30]
     )
 
     return render(request, "partials/item_picker_modal.html", {

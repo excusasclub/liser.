@@ -9,12 +9,13 @@
            class="text-base font-semibold text-white bg-transparent border-b border-white/50 focus:outline-none focus:border-white px-2 py-1 w-2/3"
            onchange="updateSectionTitle(this)">
     <div class="flex gap-2">
-        <button class="text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 transition"
-                hx-get="{% url 'lists:htmx_item_picker' %}?section_id={{ section.id }}"
-                hx-trigger="click"
-                hx-swap="outerHTML">
-            + Item
-        </button>
+                <button class="text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 transition"
+                        hx-get="{% url 'lists:htmx_item_picker' %}?section_id={{ section.id }}"
+                        hx-target="#picker-{{ section.id }}"
+                        hx-swap="innerHTML">
+                    + Item
+                </button>
+
 
         <!-- Botón para desplegar opciones -->
         <button class="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 transition"
@@ -171,15 +172,15 @@
     <div class="px-4 py-4 text-center text-gray-500 text-sm">No hay items en esta sublista.</div>
     {% endfor %}
   </div>
+
+  <!-- Contenedor donde aparecerá el item picker -->
+  <div id="picker-{{ section.id }}" class="border-t border-gray-200 bg-gray-50"></div>
 </section>
 {% empty %}
 <div class="text-center text-gray-600 py-6 border rounded bg-gray-50">
   Esta BagList no tiene secciones.
 </div>
 {% endfor %}
-
-<!-- Contenedor donde HTMX cargará el modal -->
-<div id="item-picker"></div>
 
 <style>
 .toggle-btn { transition: transform 0.3s ease; }
