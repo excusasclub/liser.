@@ -1,0 +1,69 @@
+<!-- partials/item_picker.html -->
+<div class="mt-8 bg-white border border-gray-200 rounded-xl shadow-lg p-6 max-w-5xl mx-auto"
+     id="item-picker-container"
+     data-section-id="{{ active_section_id }}">
+
+  <!-- CABECERA -->
+  <div class="flex justify-between items-center mb-5">
+    <h3 class="text-lg font-semibold text-gray-900">Selecciona un item</h3>
+    <button class="text-sm text-gray-500 hover:text-gray-700 transition"
+            onclick="closeItemPicker()">✕ Cerrar</button>
+  </div>
+
+  <!-- BUSCADOR -->
+  <div class="mb-5 flex items-center gap-2">
+    <input type="text"
+           id="item-search"
+           placeholder="Buscar item por nombre o descripción..."
+           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-[#315C95] focus:border-[#315C95]">
+    <button class="bg-[#315C95] text-white px-3 py-2 rounded-lg text-sm hover:bg-[#244571] transition"
+            onclick="searchItems()">Buscar</button>
+  </div>
+
+  <!-- LISTA DE ITEMS -->
+  <div id="item-list" class="space-y-3 max-h-[480px] overflow-y-auto pr-1">
+    {% for item in user_items %}
+    <div class="border border-gray-200 rounded-lg p-3 flex flex-col md:flex-row justify-between hover:bg-gray-50 transition"
+         data-item-id="{{ item.id }}">
+      
+      <!-- Columna izquierda -->
+      <div class="flex-1 flex items-start gap-3">
+        {% if item.snapshot.snap_image_url %}
+        <img src="{{ item.snapshot.snap_image_url }}" alt="{{ item.snapshot.snap_title }}"
+             class="w-12 h-12 rounded-md object-cover border border-gray-200 shadow-sm">
+        {% endif %}
+        <div>
+          <p class="font-semibold text-gray-900 text-sm">
+            {{ item.custom_title|default:item.snapshot.snap_title|default:"Item" }}
+          </p>
+          {% if item.snapshot.snap_description %}
+          <p class="text-xs text-gray-500 mt-0.5">
+            {{ item.snapshot.snap_description|truncatechars:100 }}
+          </p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Columna derecha -->
+      <div class="flex flex-row md:flex-row gap-2 mt-3 md:mt-0 md:items-center">
+        <button class="bg-green-600 text-white px-3 py-1.5 rounded text-xs hover:bg-green-700 transition"
+                onclick="associateItem('{{ active_section_id }}', '{{ item.id }}')">
+          Asociar
+        </button>
+      </div>
+    </div>
+    {% empty %}
+    <div class="text-center text-gray-500 text-sm py-4">
+      No hay items disponibles
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- NUEVO ITEM -->
+  <div class="mt-6 text-center">
+    <button class="bg-[#315C95] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#244571] transition"
+            onclick="openNewItemForm()">
+      + Crear nuevo item
+    </button>
+  </div>
+</div>

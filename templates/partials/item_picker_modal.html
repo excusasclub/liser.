@@ -1,0 +1,69 @@
+<!-- partials/item_picker_modal.html -->
+<div id="item-picker-modal"
+     class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+     hx-swap-oob="true">
+
+  <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl mx-4 overflow-hidden border border-gray-200">
+    <!-- CABECERA -->
+    <div class="flex justify-between items-center px-5 py-3 bg-gradient-to-r from-[#315C95] to-[#4a73b8]">
+      <h2 class="text-white font-semibold text-lg">Seleccionar item</h2>
+      <button class="text-white text-xl hover:opacity-70 transition"
+              onclick="document.getElementById('item-picker-modal').remove()">✕</button>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="p-4 space-y-4">
+      <!-- BUSCADOR -->
+      <input type="text" id="itemSearch" placeholder="Buscar por nombre..."
+             class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-[#315C95] focus:ring-[#315C95]"
+             onkeyup="filterItems(this.value)">
+
+      <!-- LISTADO -->
+      <div id="itemList" class="max-h-[400px] overflow-y-auto divide-y divide-gray-200">
+        {% for item in user_items %}
+        <div class="flex items-center justify-between py-2 px-2 hover:bg-gray-50 transition">
+          <div class="flex items-center gap-3 min-w-0">
+            {% if item.snapshot.snap_image_url %}
+              <img src="{{ item.snapshot.snap_image_url }}" alt="{{ item.snapshot.snap_title }}"
+                   class="w-10 h-10 rounded-md object-cover border border-gray-200 shadow-sm">
+            {% else %}
+              <div class="w-10 h-10 bg-gray-200 flex items-center justify-center rounded-md text-gray-400 text-xs">
+                Sin imagen
+              </div>
+            {% endif %}
+            <div class="truncate">
+              <p class="font-semibold text-sm text-gray-800 truncate">
+                {{ item.custom_title|default:item.snapshot.snap_title|default:"(Sin título)" }}
+              </p>
+              <p class="text-xs text-gray-500 truncate">
+                {{ item.snapshot.canonical_url|default:"Sin enlace" }}
+              </p>
+            </div>
+          </div>
+
+          <button class="text-xs bg-green-600 text-white px-3 py-1.5 rounded hover:bg-green-700 transition"
+                  hx-post="{% url 'lists:htmx_add_item_to_section' %}"
+                  hx-vals='{"section_id": "{{ active_section_id }}", "item_id": "{{ item.id }}"}'
+                  hx-trigger="click"
+                  hx-swap="none">
+            Asociar
+          </button>
+        </div>
+        {% empty %}
+        <p class="text-gray-500 text-sm text-center py-4">No tienes items disponibles.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function filterItems(query) {
+  const list = document.querySelectorAll('#itemList > div');
+  query = query.toLowerCase();
+  list.forEach(el => {
+    const text = el.textContent.toLowerCase();
+    el.style.display = text.includes(query) ? '' : 'none';
+  });
+}
+</script>
