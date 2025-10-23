@@ -1,0 +1,39 @@
+<div class="item-mobile bg-white hover:bg-gray-50 hover:shadow-sm transition-all duration-200"
+     data-item-id="{{ item.id }}">
+  <div class="grid grid-cols-[50px_1fr_40px] md:grid-cols-[60px_1fr_60px_60px_60px_100px_60px] gap-2 px-3 py-2 items-start md:items-center">
+
+    <!-- Imagen -->
+    <div class="flex items-center">
+      {% if item.snapshot.snap_image_url %}
+      <img src="{{ item.snapshot.snap_image_url }}" alt="{{ item.snapshot.snap_title }}"
+           class="w-10 h-10 rounded-md object-cover shadow-md border border-gray-200">
+      {% else %}
+      <div class="w-10 h-10 bg-gray-300 flex items-center justify-center rounded-md shadow-md border border-gray-200">
+        <span class="text-gray-400 text-xs">Sin imagen</span>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Título -->
+    <div class="flex flex-col min-w-0">
+      {% if item.snapshot.canonical_url %}
+      <a href="{{ item.snapshot.canonical_url }}" target="_blank"
+         class="font-semibold text-gray-900 text-sm md:text-base hover:underline line-clamp-2">
+        {{ item.custom_title|default:item.snapshot.snap_title|default:"Item" }}
+      </a>
+      {% else %}
+      <div class="font-semibold text-gray-900 text-sm md:text-base line-clamp-2">
+        {{ item.custom_title|default:item.snapshot.snap_title|default:"Item" }}
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Acciones -->
+    <div class="hidden md:flex justify-center items-center col-span-2">
+      <button class="text-red-600 hover:text-red-800 text-xs font-semibold"
+              onclick="removeItemFromSection('{{ item.section.id }}', '{{ item.id }}', event)">
+        Quitar
+      </button>
+    </div>
+  </div>
+</div>

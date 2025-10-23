@@ -1,4 +1,5 @@
 {% for section in baglist.sections.all %}
+{% csrf_token %}
 <section class="mb-8 rounded-xl overflow-hidden shadow bg-white border border-gray-200 hover:shadow-md transition-all duration-300">
 
   <!-- CABECERA editable -->
@@ -9,25 +10,24 @@
            class="text-base font-semibold text-white bg-transparent border-b border-white/50 focus:outline-none focus:border-white px-2 py-1 w-2/3"
            onchange="updateSectionTitle(this)">
     <div class="flex gap-2">
-                <button class="text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 transition"
-                        hx-get="{% url 'lists:htmx_item_picker' %}?section_id={{ section.id }}"
-                        hx-target="#picker-{{ section.id }}"
-                        hx-swap="innerHTML">
-                    + Item
-                </button>
+      <button class="text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 transition"
+              hx-get="{% url 'lists:htmx_item_picker' %}?section_id={{ section.id }}"
+              hx-target="#picker-{{ section.id }}"
+              hx-swap="innerHTML">
+        + Item
+      </button>
 
+      <!-- Botón para desplegar opciones -->
+      <button class="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 transition"
+              onclick="toggleSectionOptions('{{ section.id }}')">
+        ⤵️
+      </button>
 
-        <!-- Botón para desplegar opciones -->
-        <button class="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 transition"
-                onclick="toggleSectionOptions('{{ section.id }}')">
-            ⤵️
-        </button>
-
-        <!-- Eliminar sección -->
-        <button class="text-xs bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 transition"
-                onclick="deleteSection('{{ section.id }}')">
-            ✕
-        </button>
+      <!-- Eliminar sección -->
+      <button class="text-xs bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 transition"
+              onclick="deleteSection('{{ section.id }}')">
+        ✕
+      </button>
     </div>
   </div>
 
@@ -70,7 +70,7 @@
   </div>
 
   <!-- ITEMS -->
-  <div class="divide-y divide-gray-200 bg-white">
+  <div id="section-items-{{ section.id }}" class="divide-y divide-gray-200 bg-white">
     {% for item in section.items.all %}
     <div class="item-mobile bg-white hover:bg-gray-50 hover:shadow-sm transition-all duration-200"
          data-item-id="{{ item.id }}">
@@ -150,13 +150,13 @@
 
         <!-- Código -->
         <div class="hidden md:flex justify-center items-center">
-            {% if item.snapshot.coupon_code %}
-            <button onclick="copyCodeTailwind(this)" 
-                    class="font-bold cursor-pointer hover:underline text-xs text-[#315C95] hover:transform hover:scale-105 transition-all duration-200 px-2 py-1 rounded hover:bg-blue-50 hover:shadow-sm" 
-                    title="Copiar código">
-                {{ item.snapshot.coupon_code }}
-            </button>
-            {% else %}<span class="text-gray-300 text-xs">-</span>{% endif %}
+          {% if item.snapshot.coupon_code %}
+          <button onclick="copyCodeTailwind(this)" 
+                  class="font-bold cursor-pointer hover:underline text-xs text-[#315C95] hover:transform hover:scale-105 transition-all duration-200 px-2 py-1 rounded hover:bg-blue-50 hover:shadow-sm" 
+                  title="Copiar código">
+            {{ item.snapshot.coupon_code }}
+          </button>
+          {% else %}<span class="text-gray-300 text-xs">-</span>{% endif %}
         </div>
 
         <!-- Acción -->

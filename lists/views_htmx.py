@@ -28,32 +28,45 @@ def htmx_item_picker(request):
     section_id = request.GET.get("section_id")
     profile = request.user.profile
 
-    # Filtra los últimos 30 items del usuario
+    section = (
+        BagListSection.objects
+        .filter(id=section_id, baglist__owner=profile)
+        .select_related("baglist")
+        .first()
+    )
+    if not section:
+        return JsonResponse({"success": False, "error": "Sección no encontrada"}, status=404)
+
+    # IDs de items ya asociados a ESTA SECCIÓN
+    existing_item_ids = set(section.items.values_list("id", flat=True))
+
+    # Últimos 90 items del usuario (de cualquier baglist suya)
     user_items = (
         BagListItem.objects
         .filter(baglist__owner=profile)
         .select_related("snapshot")
-        .order_by("-created_at")[:30]
+        .order_by("-created_at")[:90]
     )
 
     return render(request, "partials/item_picker_modal.html", {
         "user_items": user_items,
         "active_section_id": section_id,
+        "existing_item_ids": existing_item_ids,
     })
+
 @login_required
 def htmx_add_item_to_section(request):
-    """Asocia un item existente a una sección concreta."""
+    """Asocia un item existente a una sección concreta y lo devuelve renderizado."""
     if request.method != "POST":
         return JsonResponse({"success": False, "error": "Método inválido"}, status=400)
 
     section_id = request.POST.get("section_id")
     item_id = request.POST.get("item_id")
 
-    # Validar pertenencia al usuario
     item = BagListItem.objects.filter(
         id=item_id,
         baglist__owner=request.user.profile
-    ).first()
+    ).select_related("snapshot").first()
 
     section = BagListSection.objects.filter(
         id=section_id,
@@ -63,11 +76,12 @@ def htmx_add_item_to_section(request):
     if not item or not section:
         return JsonResponse({"success": False, "error": "Item o sección no encontrados"}, status=404)
 
+    # Asociar el item
     item.section = section
     item.save(update_fields=["section"])
 
-    return JsonResponse({"success": True})
-
+    # Renderizar el nuevo HTML del item
+    return render(request, "partials/baglist_item.html", {"item": item, "section": section})
 
 
 # === Actualizar título de sección ===

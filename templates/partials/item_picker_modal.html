@@ -38,14 +38,21 @@
             </p>
           </div>
         </div>
+        {% if item.id in existing_item_ids %}
+          <button class="text-xs bg-gray-300 text-gray-600 px-3 py-1.5 rounded cursor-not-allowed" disabled>
+            Ya asociado
+          </button>
+        {% else %}
+          <button class="text-xs bg-green-600 text-white px-3 py-1.5 rounded hover:bg-green-700 transition"
+                  hx-post="{% url 'lists:htmx_add_item_to_section' %}"
+                  hx-vals='{"section_id": "{{ active_section_id }}", "item_id": "{{ item.id }}"}'
+                  hx-target="#section-{{ active_section_id }}-items"
+                  hx-swap="beforeend"
+                  hx-trigger="click">
+            Asociar
+          </button>
+        {% endif %}
 
-        <button class="text-xs bg-green-600 text-white px-3 py-1.5 rounded hover:bg-green-700 transition"
-                hx-post="{% url 'lists:htmx_add_item_to_section' %}"
-                hx-vals='{"section_id": "{{ active_section_id }}", "item_id": "{{ item.id }}"}'
-                hx-target="#section-items-{{ active_section_id }}"
-                hx-swap="beforeend transition:true">
-          Asociar
-        </button>
 
       </div>
       {% empty %}

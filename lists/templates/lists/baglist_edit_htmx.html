@@ -11,7 +11,7 @@
 
   <!-- Contenido principal -->
   <main class="flex-1 p-6 mx-auto max-w-5xl space-y-6">
-
+    {% csrf_token %}
     <!-- Selector de BagList -->
     <section class="rounded-xl shadow-lg mx-auto bg-[#99CB8A]/30 border border-[#8AB77A]/50 p-5">
       <h2 class="text-center text-lg font-semibold text-gray-900 mb-3">Selecciona una BagList</h2>
@@ -41,6 +41,18 @@
 
     <!-- Zona de items globales del usuario (en siguiente paso) -->
     <section id="user-items" class="space-y-4"></section>
+    <form id="csrf-form" style="display:none;">
+  {% csrf_token %}
+</form>
+
+<script>
+  document.body.addEventListener("htmx:configRequest", (event) => {
+    const token = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+    if (token) {
+      event.detail.headers['X-CSRFToken'] = token;
+    }
+  });
+</script>
 
   </main>
 </div>
