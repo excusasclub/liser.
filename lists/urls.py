@@ -5,6 +5,8 @@ from . import views_htmx
 app_name = "lists"
 
 urlpatterns = [
+    path("dashboard/", views.dashboard, name="dashboard"),
+    path("create/", views.baglist_create, name="baglist_create"),
     path("baglist/<str:handle>/<slug:slug>/", views.baglist_detail, name="baglist_detail"),
     path("baglist/<str:handle>/<slug:slug>/edit/", views.baglist_edit, name="baglist_edit"),
     path("editor/", views_htmx.htmx_editor, name="baglist_editor"),

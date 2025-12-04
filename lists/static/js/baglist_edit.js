@@ -5,33 +5,42 @@ function getCookie(name) {
   if (parts.length === 2) return parts.pop().split(";").shift();
 }
 
-// --- Modal de confirmación estilo Liser ---
-function liserConfirm(message, onConfirm) {
-  const modal = document.getElementById("liser-modal");
-  const msg = document.getElementById("liser-modal-message");
-  const btnConfirm = document.getElementById("liser-modal-confirm");
-  const btnCancel = document.getElementById("liser-modal-cancel");
+// --- Funciones para el modal de Configuración ---
+function openSettingsModal() {
+  const modal = document.getElementById('settings-modal');
+  if (modal) modal.classList.remove('hidden');
+}
 
-  msg.textContent = message;
-  modal.classList.remove("hidden");
+function closeSettingsModal() {
+  const modal = document.getElementById('settings-modal');
+  if (modal) modal.classList.add('hidden');
+}
 
-  function close() {
-    modal.classList.add("hidden");
-    btnConfirm.removeEventListener("click", confirmHandler);
-    btnCancel.removeEventListener("click", cancelHandler);
-  }
+const modal = document.getElementById("liser-modal");
+const msg = document.getElementById("liser-modal-message");
+const btnConfirm = document.getElementById("liser-modal-confirm");
+const btnCancel = document.getElementById("liser-modal-cancel");
 
-  function confirmHandler() {
-    close();
-    onConfirm();
-  }
+msg.textContent = message;
+modal.classList.remove("hidden");
 
-  function cancelHandler() {
-    close();
-  }
+function close() {
+  modal.classList.add("hidden");
+  btnConfirm.removeEventListener("click", confirmHandler);
+  btnCancel.removeEventListener("click", cancelHandler);
+}
 
-  btnConfirm.addEventListener("click", confirmHandler);
-  btnCancel.addEventListener("click", cancelHandler);
+function confirmHandler() {
+  close();
+  onConfirm();
+}
+
+function cancelHandler() {
+  close();
+}
+
+btnConfirm.addEventListener("click", confirmHandler);
+btnCancel.addEventListener("click", cancelHandler);
 }
 
 // --- Actualizar título de una subBagList ---
@@ -48,15 +57,15 @@ function updateSectionTitle(el) {
     },
     body: `section_id=${sectionId}&title=${encodeURIComponent(title)}`
   })
-  .then(res => res.json())
-  .then(data => {
-    if (!data.success) {
-      console.error(data.error || "Error al guardar el título");
-    } else {
-      console.log(`Título actualizado: ${data.title}`);
-    }
-  })
-  .catch(err => console.error("Error:", err));
+    .then(res => res.json())
+    .then(data => {
+      if (!data.success) {
+        console.error(data.error || "Error al guardar el título");
+      } else {
+        console.log(`Título actualizado: ${data.title}`);
+      }
+    })
+    .catch(err => console.error("Error:", err));
 }
 
 // --- Quitar un item de una sección ---
@@ -72,16 +81,16 @@ function removeItemFromSection(sectionId, itemId, event) {
       },
       body: `section_id=${sectionId}&item_id=${itemId}`
     })
-    .then(r => r.json())
-    .then(d => {
-      if (d.success) {
-        const row = document.querySelector(`[data-item-id='${itemId}']`);
-        if (row) row.remove();
-      } else {
-        console.error(d.error || "Error al quitar item");
-      }
-    })
-    .catch(console.error);
+      .then(r => r.json())
+      .then(d => {
+        if (d.success) {
+          const row = document.querySelector(`[data-item-id='${itemId}']`);
+          if (row) row.remove();
+        } else {
+          console.error(d.error || "Error al quitar item");
+        }
+      })
+      .catch(console.error);
   });
 }
 
@@ -96,16 +105,16 @@ function deleteSection(sectionId) {
       },
       body: `section_id=${sectionId}`
     })
-    .then(r => r.json())
-    .then(d => {
-      if (d.success) {
-        const section = document.querySelector(`[data-section-id='${sectionId}']`)?.closest("section");
-        if (section) section.remove();
-      } else {
-        console.error(d.error || "Error al eliminar la sección");
-      }
-    })
-    .catch(console.error);
+      .then(r => r.json())
+      .then(d => {
+        if (d.success) {
+          const section = document.querySelector(`[data-section-id='${sectionId}']`)?.closest("section");
+          if (section) section.remove();
+        } else {
+          console.error(d.error || "Error al eliminar la sección");
+        }
+      })
+      .catch(console.error);
   });
 }
 // Desplegar opciones de una subBagList
@@ -127,10 +136,10 @@ function updateSectionDescription(el) {
     },
     body: `section_id=${sectionId}&description=${encodeURIComponent(desc)}`
   })
-  .then(r => r.json())
-  .then(d => {
-    if (!d.success) console.error(d.error || "Error al actualizar descripción");
-  });
+    .then(r => r.json())
+    .then(d => {
+      if (!d.success) console.error(d.error || "Error al actualizar descripción");
+    });
 }
 
 // Actualizar posición
@@ -145,10 +154,10 @@ function updateSectionPosition(el) {
     },
     body: `section_id=${sectionId}&position=${pos}`
   })
-  .then(r => r.json())
-  .then(d => {
-    if (!d.success) console.error(d.error || "Error al actualizar posición");
-  });
+    .then(r => r.json())
+    .then(d => {
+      if (!d.success) console.error(d.error || "Error al actualizar posición");
+    });
 }
 // --- Selector de items ---
 function closeItemPicker() {
@@ -193,3 +202,34 @@ function associateItem(sectionId, itemId) {
 }
 
 
+
+// --- Inicializar Sortable para secciones y items ---
+function initSortable() {
+  // Secciones
+  const sectionContainers = document.querySelectorAll('.sortable-section');
+  sectionContainers.forEach(container => {
+    new Sortable(container, {
+      handle: '.section-handle',
+      animation: 150,
+      onEnd: function (/**Event*/evt) {
+        console.log('Sección reordenada', evt.item.dataset.sectionId);
+        // TODO: enviar nuevo orden al servidor si se desea
+      },
+    });
+  });
+
+  // Items dentro de cada sección
+  const itemContainers = document.querySelectorAll('.sortable-items');
+  itemContainers.forEach(container => {
+    new Sortable(container, {
+      handle: '.item-handle',
+      animation: 150,
+      onEnd: function (evt) {
+        console.log('Item reordenado', evt.item.dataset.itemId);
+        // TODO: enviar nuevo orden al servidor si se desea
+      },
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', initSortable);

@@ -1,65 +1,65 @@
 {% for section in baglist.sections.all %}
 {% csrf_token %}
-<section class="mb-8 rounded-xl overflow-hidden shadow bg-white border border-gray-200 hover:shadow-md transition-all duration-300">
+<section
+  class="mb-8 rounded-xl overflow-hidden shadow bg-white border border-gray-200 hover:shadow-md transition-all duration-300 sortable-section"
+  data-section-id="{{ section.id }}">
 
   <!-- CABECERA editable -->
-  <div class="px-4 py-2 bg-gradient-to-r from-[#315C95] to-[#4a73b8] border-b-2 border-[#2a4d7a] flex justify-between items-center">
-    <input type="text"
-           value="{{ section.title }}"
-           data-section-id="{{ section.id }}"
-           class="text-base font-semibold text-white bg-transparent border-b border-white/50 focus:outline-none focus:border-white px-2 py-1 w-2/3"
-           onchange="updateSectionTitle(this)">
+  <div
+    class="px-4 py-2 bg-gradient-to-r from-[#315C95] to-[#4a73b8] border-b-2 border-[#2a4d7a] flex justify-between items-center">
+    <div class="flex items-center gap-2 w-2/3">
+      <span class="cursor-move text-white/70 hover:text-white section-handle text-lg">☰</span>
+      <input type="text" value="{{ section.title }}" data-section-id="{{ section.id }}"
+        class="text-base font-semibold text-white bg-transparent border-b border-white/50 focus:outline-none focus:border-white px-2 py-1 w-full"
+        onchange="updateSectionTitle(this)">
+    </div>
     <div class="flex gap-2">
       <button class="text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 transition"
-              hx-get="{% url 'lists:htmx_item_picker' %}?section_id={{ section.id }}"
-              hx-target="#picker-{{ section.id }}"
-              hx-swap="innerHTML">
+        hx-get="{% url 'lists:htmx_item_picker' %}?section_id={{ section.id }}" hx-target="#picker-{{ section.id }}"
+        hx-swap="innerHTML">
         + Item
       </button>
 
       <!-- Botón para desplegar opciones -->
       <button class="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 transition"
-              onclick="toggleSectionOptions('{{ section.id }}')">
+        onclick="toggleSectionOptions('{{ section.id }}')">
         ⤵️
       </button>
 
       <!-- Eliminar sección -->
       <button class="text-xs bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 transition"
-              onclick="deleteSection('{{ section.id }}')">
+        onclick="deleteSection('{{ section.id }}')">
         ✕
       </button>
     </div>
   </div>
 
   <!-- OPCIONES AVANZADAS -->
-  <div id="section-options-{{ section.id }}" 
-       class="hidden bg-gradient-to-b from-white to-gray-50 border-t border-gray-200 px-5 py-4 space-y-4 transition-all duration-300 ease-in-out">
-    
+  <div id="section-options-{{ section.id }}"
+    class="hidden bg-gradient-to-b from-white to-gray-50 border-t border-gray-200 px-5 py-4 space-y-4 transition-all duration-300 ease-in-out">
+
     <div class="grid md:grid-cols-2 gap-4">
       <!-- Descripción -->
       <div class="flex flex-col">
         <label class="block text-xs font-semibold text-gray-600 mb-1 tracking-wide uppercase">Descripción</label>
-        <textarea data-section-id="{{ section.id }}"
-                  onchange="updateSectionDescription(this)"
-                  class="w-full text-sm border border-gray-300 rounded-lg p-2 focus:border-[#315C95] focus:ring-[#315C95] bg-white shadow-inner resize-y"
-                  rows="1"
-                  placeholder="Añade una breve descripción...">{{ section.description }}</textarea>
+        <textarea data-section-id="{{ section.id }}" onchange="updateSectionDescription(this)"
+          class="w-full text-sm border border-gray-300 rounded-lg p-2 focus:border-[#315C95] focus:ring-[#315C95] bg-white shadow-inner resize-y"
+          rows="1" placeholder="Añade una breve descripción...">{{ section.description }}</textarea>
       </div>
 
       <!-- Posición -->
       <div class="flex flex-col w-full md:w-1/3">
         <label class="block text-xs font-semibold text-gray-600 mb-1 tracking-wide uppercase">Posición</label>
-        <input type="number"
-               data-section-id="{{ section.id }}"
-               value="{{ section.position|default:0 }}"
-               onchange="updateSectionPosition(this)"
-               class="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:border-[#315C95] focus:ring-[#315C95] bg-white shadow-inner">
+        <input type="number" data-section-id="{{ section.id }}" value="{{ section.position|default:0 }}"
+          onchange="updateSectionPosition(this)"
+          class="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:border-[#315C95] focus:ring-[#315C95] bg-white shadow-inner">
       </div>
     </div>
   </div>
 
   <!-- CABECERA DE TABLA -->
-  <div class="hidden md:grid grid-cols-[60px_1fr_60px_60px_60px_100px_60px] gap-2 px-3 py-2 text-sm font-semibold text-gray-700 border-b border-gray-300 bg-gradient-to-b from-gray-100 to-gray-200 shadow-sm">
+  <div
+    class="hidden md:grid grid-cols-[60px_1fr_60px_60px_60px_100px_60px] gap-2 px-3 py-2 text-sm font-semibold text-gray-700 border-b border-gray-300 bg-gradient-to-b from-gray-100 to-gray-200 shadow-sm">
     <div></div>
     <div>Producto</div>
     <div class="text-center">Link</div>
@@ -70,20 +70,23 @@
   </div>
 
   <!-- ITEMS -->
-  <div id="section-items-{{ section.id }}" class="divide-y divide-gray-200 bg-white">
+  <div id="section-items-{{ section.id }}" class="divide-y divide-gray-200 bg-white sortable-items"
+    data-section-id="{{ section.id }}">
     {% for item in section.items.all %}
     <div class="item-mobile bg-white hover:bg-gray-50 hover:shadow-sm transition-all duration-200"
-         data-item-id="{{ item.id }}">
-      
-      <div class="grid grid-cols-[50px_1fr_40px] md:grid-cols-[60px_1fr_60px_60px_60px_100px_60px] gap-2 px-3 py-2 items-start md:items-center">
-        
+      data-item-id="{{ item.id }}">
+
+      <div
+        class="grid grid-cols-[50px_1fr_40px] md:grid-cols-[60px_1fr_60px_60px_60px_100px_60px] gap-2 px-3 py-2 items-start md:items-center">
+
         <!-- Imagen -->
         <div class="flex items-center">
           {% if item.snapshot.snap_image_url %}
           <img src="{{ item.snapshot.snap_image_url }}" alt="{{ item.snapshot.snap_title }}"
-               class="w-10 h-10 rounded-md object-cover shadow-md border border-gray-200">
+            class="w-10 h-10 rounded-md object-cover shadow-md border border-gray-200">
           {% else %}
-          <div class="w-10 h-10 bg-gray-300 flex items-center justify-center rounded-md shadow-md border border-gray-200">
+          <div
+            class="w-10 h-10 bg-gray-300 flex items-center justify-center rounded-md shadow-md border border-gray-200">
             <span class="text-gray-400 text-xs">Sin imagen</span>
           </div>
           {% endif %}
@@ -93,7 +96,7 @@
         <div class="flex flex-col min-w-0">
           {% if item.snapshot.canonical_url %}
           <a href="{{ item.snapshot.canonical_url }}" target="_blank"
-             class="font-semibold text-gray-900 drop-shadow-sm text-sm md:text-base hover:underline line-clamp-2">
+            class="font-semibold text-gray-900 drop-shadow-sm text-sm md:text-base hover:underline line-clamp-2">
             {{ item.custom_title|default:item.snapshot.snap_title|default:"Item" }}
           </a>
           {% else %}
@@ -109,7 +112,7 @@
         <!-- Botón móvil -->
         <div class="md:hidden flex items-center justify-center">
           <button class="text-gray-400 text-sm p-1 hover:text-gray-600 rounded transition-transform toggle-btn"
-                  onclick="const details=this.closest('.item-mobile').querySelector('.mobile-details');details.classList.toggle('hidden');this.classList.toggle('rotate-180');">
+            onclick="const details=this.closest('.item-mobile').querySelector('.mobile-details');details.classList.toggle('hidden');this.classList.toggle('rotate-180');">
             ⤵️
           </button>
         </div>
@@ -118,7 +121,7 @@
         <div class="hidden md:flex justify-center items-center">
           {% if item.snapshot.canonical_url %}
           <a href="{{ item.snapshot.canonical_url }}" target="_blank"
-             class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:scale-110 hover:shadow-md rounded-full p-1">
+            class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:scale-110 hover:shadow-md rounded-full p-1">
             <img src="https://cdn-icons-png.flaticon.com/128/10276/10276957.png" class="w-5 h-5 drop-shadow-sm">
           </a>
           {% else %}<span class="text-gray-300 text-xs">-</span>{% endif %}
@@ -128,7 +131,7 @@
         <div class="hidden md:flex justify-center items-center">
           {% if item.snapshot.video_url %}
           <a href="{{ item.snapshot.video_url }}" target="_blank"
-             class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:scale-110 hover:shadow-md rounded-full p-1">
+            class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:scale-110 hover:shadow-md rounded-full p-1">
             <img src="https://cdn-icons-png.flaticon.com/128/1384/1384060.png" class="w-5 h-5 drop-shadow-sm">
           </a>
           {% else %}<span class="text-gray-300 text-xs">-</span>{% endif %}
@@ -137,23 +140,23 @@
         <!-- Instagram -->
         <div class="hidden md:flex justify-center items-center">
           {% if item.snapshot.extra_links %}
-            {% for link in item.snapshot.extra_links %}
-              {% if link.type == "instagram" %}
-              <a href="{{ link.url }}" target="_blank"
-                 class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:scale-110 hover:shadow-md rounded-full p-1">
-                <img src="https://cdn-icons-png.flaticon.com/128/2111/2111463.png" class="w-5 h-5 drop-shadow-sm">
-              </a>
-              {% endif %}
-            {% endfor %}
+          {% for link in item.snapshot.extra_links %}
+          {% if link.type == "instagram" %}
+          <a href="{{ link.url }}" target="_blank"
+            class="hover:opacity-70 transition-all duration-200 text-[#315C95] hover:scale-110 hover:shadow-md rounded-full p-1">
+            <img src="https://cdn-icons-png.flaticon.com/128/2111/2111463.png" class="w-5 h-5 drop-shadow-sm">
+          </a>
+          {% endif %}
+          {% endfor %}
           {% else %}<span class="text-gray-300 text-xs">-</span>{% endif %}
         </div>
 
         <!-- Código -->
         <div class="hidden md:flex justify-center items-center">
           {% if item.snapshot.coupon_code %}
-          <button onclick="copyCodeTailwind(this)" 
-                  class="font-bold cursor-pointer hover:underline text-xs text-[#315C95] hover:transform hover:scale-105 transition-all duration-200 px-2 py-1 rounded hover:bg-blue-50 hover:shadow-sm" 
-                  title="Copiar código">
+          <button onclick="copyCodeTailwind(this)"
+            class="font-bold cursor-pointer hover:underline text-xs text-[#315C95] hover:transform hover:scale-105 transition-all duration-200 px-2 py-1 rounded hover:bg-blue-50 hover:shadow-sm"
+            title="Copiar código">
             {{ item.snapshot.coupon_code }}
           </button>
           {% else %}<span class="text-gray-300 text-xs">-</span>{% endif %}
@@ -162,7 +165,7 @@
         <!-- Acción -->
         <div class="hidden md:flex justify-center items-center">
           <button class="text-red-600 hover:text-red-800 text-xs font-semibold"
-                  onclick="removeItemFromSection('{{ section.id }}', '{{ item.id }}', event)">
+            onclick="removeItemFromSection('{{ section.id }}', '{{ item.id }}', event)">
             Quitar
           </button>
         </div>
@@ -183,12 +186,18 @@
 {% endfor %}
 
 <style>
-.toggle-btn { transition: transform 0.3s ease; }
-.toggle-btn.rotate-180 { transform: rotate(180deg); }
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
+  .toggle-btn {
+    transition: transform 0.3s ease;
+  }
+
+  .toggle-btn.rotate-180 {
+    transform: rotate(180deg);
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 </style>

@@ -5,34 +5,29 @@
 
 {% block content %}
 <div class="flex min-h-screen">
-
   <!-- Sidebar -->
   {% include 'partials/sidebar.html' %}
 
-  <!-- Contenido principal -->
+  <!-- Main content -->
   <main class="flex-1 p-6 mx-auto max-w-5xl space-y-6">
     {% csrf_token %}
     <!-- Selector de BagList -->
     <section class="rounded-xl shadow-lg mx-auto bg-[#99CB8A]/30 border border-[#8AB77A]/50 p-5">
       <h2 class="text-center text-lg font-semibold text-gray-900 mb-3">Selecciona una BagList</h2>
-
       <div class="flex items-center justify-center gap-3">
-        <select
-          id="baglist-selector"
-          name="baglist_id"
+        <select id="baglist-selector" name="baglist_id"
           class="w-full max-w-md rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#99CB8A] focus:border-[#8AB77A] transition"
-          hx-get="{% url 'lists:htmx_baglist_sections' %}"
-          hx-trigger="change"
-          hx-target="#baglist-sections"
-          hx-swap="innerHTML"
-          hx-indicator="#sections-loading"
-        >
+          hx-get="{% url 'lists:htmx_baglist_sections' %}" hx-trigger="change" hx-target="#baglist-sections"
+          hx-swap="innerHTML" hx-indicator="#sections-loading">
           <option value="">— Elige una BagList —</option>
           {% for bl in baglists %}
-            <option value="{{ bl.id }}">{{ bl.title }}</option>
+          <option value="{{ bl.id }}">{{ bl.title }}</option>
           {% endfor %}
         </select>
         <span id="sections-loading" class="htmx-indicator text-sm text-gray-600">Cargando…</span>
+        <!-- Settings button -->
+        <button class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded"
+          onclick="openSettingsModal()">⚙️ Configuración</button>
       </div>
     </section>
 
@@ -41,33 +36,21 @@
 
     <!-- Zona de items globales del usuario (en siguiente paso) -->
     <section id="user-items" class="space-y-4"></section>
-    <form id="csrf-form" style="display:none;">
-  {% csrf_token %}
-</form>
-
-<script>
-  document.body.addEventListener("htmx:configRequest", (event) => {
-    const token = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
-    if (token) {
-      event.detail.headers['X-CSRFToken'] = token;
-    }
-  });
-</script>
-
   </main>
 </div>
-<!-- Modal de confirmación Liser -->
-<div id="liser-modal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-  <div class="bg-white rounded-xl shadow-xl p-6 w-80 text-center">
-    <p id="liser-modal-message" class="text-gray-800 mb-4 text-sm font-semibold"></p>
-    <div class="flex justify-center gap-3">
-      <button id="liser-modal-cancel"
-              class="px-4 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 text-sm font-semibold">Cancelar</button>
-      <button id="liser-modal-confirm"
-              class="px-4 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm font-semibold">Confirmar</button>
+
+<!-- Settings Modal -->
+<div id="settings-modal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+  <div class="bg-white rounded-xl shadow-xl p-6 w-96">
+    <h3 class="text-lg font-semibold mb-4">Configuración del Editor</h3>
+    <p class="text-sm text-gray-700 mb-4">Ajustes del editor (próximamente).</p>
+    <div class="flex justify-end gap-2">
+      <button class="px-4 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+        onclick="closeSettingsModal()">Cerrar</button>
     </div>
   </div>
 </div>
+
 {% endblock %}
 
 {% block extra_js %}
